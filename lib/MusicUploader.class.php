@@ -7,6 +7,12 @@ class MusicUploader {
 	private $extractdir;
 	
 	public function __construct($uploaddir, $extractdir, $good_types) {
+		if (!is_dir($uploaddir)) {
+			throw Exception("No upload directory!");
+		}
+		if (!is_dir($extractdir)) {
+			throw Exception("No extract directory!")
+		}
 		$this->uploaddir = $uploaddir;
 		$this->extractdir = $extractdir;
 		$this->good_types = ($good_types) ? $good_types : array("audio/mpeg", "audio/ogg");
