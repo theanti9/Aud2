@@ -32,7 +32,7 @@ function getMime(url) {
 	return mime;
 }
 
-withMinutes(seconds) {
+function withMinutes(seconds) {
 	var minutes = (Math.floor(seconds / 60)).toString();
 	seconds -= (minutes * 60).toString();
 	if(seconds.length == 1) {
@@ -50,9 +50,9 @@ function updateTime(time, seek) {
 		time = audElem.currentTime;
 	}
 	// time is time we're currently at/seeking to
-	audTimePassed.html(withMinutes(time);
-	audTimeLeft.html(withMinutes(Math.floor(audElem.duration - time));
-	audSeek.value = time;
+	audTimePassed.html(withMinutes(time));
+	audTimeLeft.html(withMinutes(Math.floor(audElem.duration - time)));
+	//audSeek.value = time;
 	if(seek && audElem.currentTime != time) {
 		audElem.currentTime = time;
 	}
@@ -62,7 +62,9 @@ function updateTime(time, seek) {
 function audSupportCheck() {
 	if(!!document.createElement('audio').canPlayType) {
 		audioSupported = true;
-		audElem = document.getElementById('aud2Audio');
+		while(!audElem.buffered) {
+			
+		}
 		var mimes = ['audio/mpeg;', 'audio/ogg; codecs="vorbis"', 'audio/wav; codecs="1"', 'audio/mp4; codecs="mp4a.40.2"'];
 		for(var type in mimes) {
 			if(!!(audElem.canPlayType(type).replace(/no/, ''))) {
@@ -80,13 +82,16 @@ function audSupportCheck() {
 
 // Set up some elements + variables
 function audSetup() {
+	audElem = document.getElementById('aud2Audio');
+	audElem.innerHTML = '<audio id="aud2Audio" src="http://upload.wikimedia.org/wikipedia/commons/a/a9/Tromboon-sample.ogg" ontimeupdate="updateTime();" autobuffer></audio>';
 	audTimePassed = $('#audTimePassed');
 	audTimeLeft = $('#audTimeLeft');
 	audAudio = $('#audAudio');
 	audPlayer = $('#audPlayer');
 	audSeek = $('#audSeek');
-	audAudio.html('<audio id="aud2Audio" src="http://upload.wikimedia.org/wikipedia/commons/a/a9/Tromboon-sample.ogg" ontimeupdate="updateTime();" autobuffer></audio>');
-	audElem = $('#aud2Audio');
+}
+
+function audInit() {
 	audPlayer.fadeIn();
 }
 
@@ -119,7 +124,7 @@ function changeSong(src) {
 }
 
 // Bind some JQuery + HTML5 event functions
-audBindEvents() {
+function audBindEvents() {
 	
 	//// Clicks
 	//
@@ -149,6 +154,7 @@ audBindEvents() {
 	//
 	$('audSeek').slider({max: Math.floor(audElem.duration),
 		start: function(event, ui) {
+			console.log(ui.handle);
 			audElem.seeking = true;
 			lastSeekIndex = audElem.currentTime;
 			updateTime();
@@ -170,8 +176,9 @@ audBindEvents() {
 
 
 $(document).ready(function(){
+	audSetup();
 	audSupportCheck();
 	if(audioSupported && mimesSupported.length){
-		audSetup();
+		audInit();
 	}
 });

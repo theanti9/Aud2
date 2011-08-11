@@ -1,4 +1,9 @@
 
-.audPlayer {
+#audPlayer {
 	display: none;
+}
+
+#audSeek {
+	padding: 0px;
+	margin: 0px;
 }
