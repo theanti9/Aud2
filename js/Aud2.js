@@ -1,4 +1,3 @@
-
 // Audio Player Controls, Containers, Info
 var audElem = null;
 var audAudio = null;
@@ -26,6 +25,9 @@ var userid = null;
 var libraryJson = null; // Whole library as one.
 var curPlaylist = null; // Keep what is currently playing. Subset of libraryJson
 
+
+////Utilities
+//
 // Returns mimetype from url
 function getMime(url) {
 	var mime = $.ajax({type: "HEAD",url: url, success: function(data, status, xhr){}}).getResponseHeader("Content-Type");
@@ -33,62 +35,62 @@ function getMime(url) {
 }
 
 function withMinutes(seconds) {
-	var minutes = (Math.floor(seconds / 60)).toString();
-	seconds -= (minutes * 60).toString();
-	if(seconds.length == 1) {
+	var minutes = Math.floor(seconds / 60);
+	seconds -= Math.floor(minutes * 60);
+	if(seconds.toString().length == 1) {
 		seconds = ['0', seconds].join('');
 	}
-	if(minutes.length == 1) {
+	if(minutes.toString().length == 1) {
 		minutes = ['0', minutes].join('');
 	}
-	return [minutes, seconds].join(':')
+	return [minutes, seconds].join(':');
 }
 
 // Updates time to the current time, otherwise updates to the specified time. Optionally seeks to that time
 function updateTime(time, seek) {
 	if(!time) {
-		time = audElem.currentTime;
+		time = Math.floor(audElem.currentTime);
 	}
 	// time is time we're currently at/seeking to
-	audTimePassed.html(withMinutes(time));
-	audTimeLeft.html(withMinutes(Math.floor(audElem.duration - time)));
+	audTimePassed.html(withMinutes(Math.floor(time)));
+	audTimeLeft.html(withMinutes(Math.floor(Math.floor(audElem.duration) - Math.floor(time))));
 	//audSeek.value = time;
 	if(seek && audElem.currentTime != time) {
 		audElem.currentTime = time;
 	}
 }
 
+
+////Startup
+//
+// Set up some elements + variables
+function audSetup() {
+	audAudio = $('#audAudio');
+	audAudio.html('<audio id="aud2Audio" src="http://theanti9.com/Aud/Users/Angelica.mp3" ontimeupdate="updateTime();" autobuffer></audio>');
+	audElem = document.getElementById('aud2Audio');
+	audTimePassed = $('#audTimePassed');
+	audTimeLeft = $('#audTimeLeft');
+	audPlayer = $('#audPlayer');
+	audSeek = $('#audSeek');
+}
+
 // Checks if audio element - and possible mimetypes - are supported by the browser
 function audSupportCheck() {
 	if(!!document.createElement('audio').canPlayType) {
 		audioSupported = true;
-		while(!audElem.buffered) {
-			
-		}
 		var mimes = ['audio/mpeg;', 'audio/ogg; codecs="vorbis"', 'audio/wav; codecs="1"', 'audio/mp4; codecs="mp4a.40.2"'];
-		for(var type in mimes) {
-			if(!!(audElem.canPlayType(type).replace(/no/, ''))) {
-				mimesSupported.push(type.substring(0, type.indexOf(';')));
+		for(i=0;i<mimes.length;++i) {
+			if(!!(audElem.canPlayType(mimes[i]).replace(/no/, ''))) {
+				mimesSupported.push(mimes[i].substring(0, mimes[i].indexOf(';')));
 			}
 			else {
-				mimesUnsupported.push(type.substring(0, type.indexOf(';')));
+				mimesUnsupported.push(mimes[i].substring(0, mimes[i].indexOf(';')));
 			}
 		}
 	}
 	else {
 		$('audPlayer').html('<p class="ui-state-error">Sorry, your browser does not support the audio element.</p>').fadeIn();
 	}
-}
-
-// Set up some elements + variables
-function audSetup() {
-	audElem = document.getElementById('aud2Audio');
-	audElem.innerHTML = '<audio id="aud2Audio" src="http://upload.wikimedia.org/wikipedia/commons/a/a9/Tromboon-sample.ogg" ontimeupdate="updateTime();" autobuffer></audio>';
-	audTimePassed = $('#audTimePassed');
-	audTimeLeft = $('#audTimeLeft');
-	audAudio = $('#audAudio');
-	audPlayer = $('#audPlayer');
-	audSeek = $('#audSeek');
 }
 
 function audInit() {
@@ -132,9 +134,11 @@ function audBindEvents() {
 	$('#audPlPa').click(function() {
 		if(audElem.paused) {
 			audElem.play();
+			$("#audPlPa").html("Pause");
 		}
 		else {
 			audElem.pause();
+			$("#audPlPa").html("Play");
 		}
 	});
 
@@ -149,12 +153,25 @@ function audBindEvents() {
 		curSongIndex--;
 		changeSong(curPlayList[curSongIndex].songpath);
 	});
-
-	////Sliders
+	
+	//// HTML5 audio events
 	//
-	$('audSeek').slider({max: Math.floor(audElem.duration),
+	$(audElem).bind("loadedmetadata", function(){
+		updateTime();
+		audSupportCheck();
+		if(audioSupported && mimesSupported.length){
+			audInit();
+		}
+		else {
+			audPlayer.html('<div class="ui-state-error">Sorry, your browser does not support the HTML5 audio tag.</div>');
+		}
+	});
+}
+
+function audNewSeeker() {
+	$("#audSeekCont").html('<div class="audCont" id="audSeek"></div>');
+	$('#audSeek').slider({max: Math.floor(audElem.duration),
 		start: function(event, ui) {
-			console.log(ui.handle);
 			audElem.seeking = true;
 			lastSeekIndex = audElem.currentTime;
 			updateTime();
@@ -168,17 +185,13 @@ function audBindEvents() {
 			audElem.seeking = false;
 		}
 	});
-	
-	//// HTML5 audio events
-	//
-
 }
 
-
 $(document).ready(function(){
-	audSetup();
-	audSupportCheck();
-	if(audioSupported && mimesSupported.length){
-		audInit();
+	if($.browser.msie) {
+		window.location.href = "html/ie/html";
 	}
+	audSetup();
+	audBindEvents();
+	audNewSeeker();
 });

@@ -11,7 +11,7 @@
 			</div>
 			<div id="audControls">
 				<button id="audPrev">&lt;</button> <button id="audPlPa">Play</button> <button id="audNext">&gt;</button>
-				<br /><span id="audTimePassed">00:00</span> <div id="audSeek"></div> <span id="audTimeLeftPrefix">-</span><span id="audTimeLeft">-00:00</span>
+				<br /><span class="audCont" id="audTimePassed">00:00</span> <div class="audCont" id="audSeekCont"><div class="audCont" id="audSeek"></div></div> <span class="audCont">-</span><span class="audCont" id="audTimeLeft">00:00</span>
 			</div>
 		</div>
 		<div id="audLibrary">
