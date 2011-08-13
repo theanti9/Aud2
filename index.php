@@ -17,11 +17,15 @@
 				<br /><span class="audCont audTime" id="audTimePassed">00:00</span> <div class="audCont" id="audSeekCont"><div id="audSeek"></div></div> <span class="audCont audTime">-<span class="audCont" id="audTimeLeft">00:00</span></span>
 			</div>
 		</div>
-		<form action="views/upload.php" method="POST" enctype="multipart/form-data">
-		<label>File: </label><input type="file" name="file" id="file" />
-		<input type="submit" value="Submit" id="filesubmit" /><img id="loading" src="img/loading.gif" style="display:none;" /><br />
-		Music file or Zip file only.
-		</form>
+		<div id="audFileUpload">
+			<form action="views/upload.php" method="POST" id="audUpload" enctype="multipart/form-data">
+				<label>File: </label><input type="file" class="multi" name="file[]" accept="m4a|mp3|wav|ogg"/><img id="audLoading" src="img/loading.gif" /><br />
+				<input type="hidden" name="userid" value="1" />
+				<input type="hidden" name="upload_type" value="direct" />
+				<input type="submit" name="upload" />
+				<p>Music file or Zip file only.</p>
+			</form>
+		</div>
 		<div id="audLibrary">
 			<h3>Aud Library</h3>
 			<table>
@@ -39,6 +43,9 @@
 		<script src="js/jquery-1.6.2.min.js"></script>
 		<script src="js/jquery-ui-1.8.15.custom.min.js"></script>
 		<script src="js/Aud2.js"></script>
-		<script src="js/jquery.iframe-post-form.js"></script>
+		<script src="js/jquery.MultiFile.js"></script>
+		<script src="js/jquery.blockUI.js"></script>
+		<script src="js/jquery.MetaData.js"></script>
+		<script src="js/jquery.form.js"></script>
 	</footer>
 </html>

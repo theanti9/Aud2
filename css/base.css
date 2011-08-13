@@ -15,6 +15,10 @@
 	padding-bottom: 12px;
 }
 
+#audLoading {
+	display: hidden;
+}
+
 .audCont {
 	display: inline-block;
 }

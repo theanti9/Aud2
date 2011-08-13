@@ -11,7 +11,7 @@ class MusicUploader {
 			throw Exception("No upload directory!");
 		}
 		if (!is_dir($extractdir)) {
-			throw Exception("No extract directory!")
+			throw Exception("No extract directory!");
 		}
 		$this->uploaddir = $uploaddir;
 		$this->extractdir = $extractdir;

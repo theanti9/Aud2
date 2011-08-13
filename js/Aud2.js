@@ -154,6 +154,8 @@ function audBindEvents() {
 		curSongIndex--;
 		changeSong(curPlayList[curSongIndex].songpath);
 	});
+
+	$("#audUpload").ajaxForm();
 	
 	//// HTML5 audio events
 	//

@@ -1,12 +1,13 @@
 <?php
 
-$audBasePath = "/Users/ryan/Dropbox/github/Aud2/";
+$audBasePath = "/Users/wil/git/Aud2/";
 
 $audDbHost = "localhost";
 $audDbUser = "root";
-$audDbPass = "";
+$audDbPass = "root";
 $audDbName = "aud2";
-
+$audUploadPath = $audBasePath . "upload/";
+$audExtractPath = $audBasePath . "extract/";
 
 
 
