@@ -6,8 +6,19 @@
 #audSeek {
 	padding: 0px;
 	margin: 0px;
+	width: 500px;
+	display: inline-block;
+}
+
+#audControls, #audNowMeta {
+	text-align: center;
+	padding-bottom: 12px;
 }
 
 .audCont {
-	display: inline;
+	display: inline-block;
+}
+
+.audTime {
+	padding: 0px 7px 0px 7px;
 }

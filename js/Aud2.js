@@ -5,7 +5,7 @@ var audPlayer = null;
 var audSeek = null;
 var audTimePassed = null;
 var audTimeLeft = null;
-var lastSeekIndex = null;
+var lastValue = null;
 var audioSupported = false;
 var mimesSupported = new Array();
 var mimesUnsupported = new Array();
@@ -66,12 +66,13 @@ function updateTime(time, seek) {
 // Set up some elements + variables
 function audSetup() {
 	audAudio = $('#audAudio');
-	audAudio.html('<audio id="aud2Audio" src="http://theanti9.com/Aud/Users/Angelica.mp3" ontimeupdate="updateTime();" autobuffer></audio>');
+	audAudio.html('<audio id="aud2Audio" src="http://theanti9.com/Angelica.mp3" autobuffer></audio>');
 	audElem = document.getElementById('aud2Audio');
 	audTimePassed = $('#audTimePassed');
 	audTimeLeft = $('#audTimeLeft');
 	audPlayer = $('#audPlayer');
 	audSeek = $('#audSeek');
+	audBindEvents();
 }
 
 // Checks if audio element - and possible mimetypes - are supported by the browser
@@ -156,9 +157,14 @@ function audBindEvents() {
 	
 	//// HTML5 audio events
 	//
+	$(audElem).bind("timeupdate", function(){
+		updateTime();
+	});
+
 	$(audElem).bind("loadedmetadata", function(){
 		updateTime();
 		audSupportCheck();
+		audNewSeeker();
 		if(audioSupported && mimesSupported.length){
 			audInit();
 		}
@@ -173,15 +179,19 @@ function audNewSeeker() {
 	$('#audSeek').slider({max: Math.floor(audElem.duration),
 		start: function(event, ui) {
 			audElem.seeking = true;
-			lastSeekIndex = audElem.currentTime;
-			updateTime();
+			// Set lastValue to where we currently are
+			lastValue = ui.value;
 		},
 		slide: function(event, ui) {
-			var seekJump = ui.value - lastSeekIndex
-			updateTime(audElem.currentTime + seekJump);
+			// WhereWeAreNow - WhereWeWereLastMove = HowMuchWeMoved
+			var seekJump = ui.value - lastValue;
+			// Seek to WhereWeAreNow +- HowMuchWeMoved
+			updateTime(ui.value + seekJump, true);
+			lastValue = ui.value;
 		},
 		stop: function(event, ui) {
-			updateTime();
+			updateTime(ui.value, true);
+			lastValue = ui.value;
 			audElem.seeking = false;
 		}
 	});
@@ -192,6 +202,4 @@ $(document).ready(function(){
 		window.location.href = "html/ie/html";
 	}
 	audSetup();
-	audBindEvents();
-	audNewSeeker();
 });
