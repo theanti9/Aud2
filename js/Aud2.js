@@ -72,6 +72,8 @@ function audSetup() {
 	audTimeLeft = $('#audTimeLeft');
 	audPlayer = $('#audPlayer');
 	audSeek = $('#audSeek');
+	audBindEvents();
+	
 }
 
 // Checks if audio element - and possible mimetypes - are supported by the browser
@@ -160,6 +162,7 @@ function audBindEvents() {
 		updateTime();
 		audSupportCheck();
 		if(audioSupported && mimesSupported.length){
+			audNewSeeker();
 			audInit();
 		}
 		else {
@@ -192,6 +195,4 @@ $(document).ready(function(){
 		window.location.href = "html/ie/html";
 	}
 	audSetup();
-	audBindEvents();
-	audNewSeeker();
 });
