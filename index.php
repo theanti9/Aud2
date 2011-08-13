@@ -39,6 +39,6 @@
 		<script src="js/jquery-1.6.2.min.js"></script>
 		<script src="js/jquery-ui-1.8.15.custom.min.js"></script>
 		<script src="js/Aud2.js"></script>
-		<script src="js/ajaxfileupload.js"></script>
+		<script src="js/jquery.iframe-post-form.js"></script>
 	</footer>
 </html>
