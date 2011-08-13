@@ -17,6 +17,11 @@
 				<br /><span class="audCont audTime" id="audTimePassed">00:00</span> <div class="audCont" id="audSeekCont"><div id="audSeek"></div></div> <span class="audCont audTime">-<span class="audCont" id="audTimeLeft">00:00</span></span>
 			</div>
 		</div>
+		<form action="views/upload.php" method="POST" enctype="multipart/form-data">
+		<label>File: </label><input type="file" name="file" id="file" />
+		<input type="submit" value="Submit" id="filesubmit" /><img id="loading" src="img/loading.gif" style="display:none;" /><br />
+		Music file or Zip file only.
+		</form>
 		<div id="audLibrary">
 			<h3>Aud Library</h3>
 			<table>
@@ -34,5 +39,6 @@
 		<script src="js/jquery-1.6.2.min.js"></script>
 		<script src="js/jquery-ui-1.8.15.custom.min.js"></script>
 		<script src="js/Aud2.js"></script>
+		<script src="js/ajaxfileupload.js"></script>
 	</footer>
 </html>

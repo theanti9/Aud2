@@ -1,15 +1,15 @@
 <?php
 
 // Make sure we have what we need
-if (count($_FILES) == 0 || !isset($_POST['upload_type']) || !isset($_POST['userid']})) {
+if (count($_FILES) == 0 || !isset($_POST['upload_type']) || !isset($_POST['userid'])) {
 	exit();
 }
 
 // Dump non-error files into a new array
-$files = [];
+$files = array();
 foreach ($_FILES as $file) {
 	if ($file['error'] > 0) {
-		continue
+		continue;
 	}
 	$files[] = $file;
 }

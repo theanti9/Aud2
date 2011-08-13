@@ -15,7 +15,7 @@ class MusicUploader {
 		}
 		$this->uploaddir = $uploaddir;
 		$this->extractdir = $extractdir;
-		$this->good_types = ($good_types) ? $good_types : array("audio/mpeg", "audio/ogg");
+		$this->good_types = ($good_types) ? $good_types : array("audio/mpeg", "audio/ogg", "audio/wav", "audio/mp4");
 	}
 	
 	public function ProcessSingles(PDO &$pdo, $files, User $user) {
@@ -87,6 +87,10 @@ class MusicUploader {
 		while ($it->isValid()) {
 			if (!$it->isDot()) {
 				$tmppath = $it->key();
+				$finfo = finfo_open(FILEINFO_MIME_TYPE);
+				if (!in_array(finfo_file($finfo,$tmppath),$this->good_types)) {
+					unlink($tmppath);
+				}
 				$path = $this->uploaddir . "/";
 				$tag = id3_get_tag($tmppath, ID3_V2_3);
 				$artistdir = (!empty($tag['artist'])) ? $tag['artist'] : "Unknown";
@@ -108,6 +112,7 @@ class MusicUploader {
 					$path = substr($path, 0, strrpos("$path", ".")) . "_" . substr($path, -3);
 				}
 				rename($tmppath, $path);
+
 				$song = new Song($pdo,NULL,$path,$tag);
 				$song->Update();
 			}
