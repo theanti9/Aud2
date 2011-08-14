@@ -179,7 +179,7 @@ function audBindEvents() {
 		updateTime();
 		audSupportCheck();
 		audNewSeeker();
-		audElem.volume = 0.7;
+		audElem.volume = 0.5;
 		if(audioSupported && mimesSupported.length){
 			audInit();
 		}
