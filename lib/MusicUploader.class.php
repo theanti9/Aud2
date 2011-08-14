@@ -5,21 +5,22 @@ class MusicUploader {
 	private $uploaddir;
 	private $good_types;
 	private $extractdir;
-	
-	public function __construct($uploaddir, $extractdir, $good_types) {
+	private $settings;
+	public function __construct($uploaddir, $extractdir, $good_types, Settings $settings) {
 		if (!is_dir($uploaddir)) {
-			throw Exception("No upload directory!");
+			throw new Exception("No upload directory!");
 		}
 		if (!is_dir($extractdir)) {
-			throw Exception("No extract directory!");
+			throw new Exception("No extract directory!");
 		}
 		$this->uploaddir = $uploaddir;
 		$this->extractdir = $extractdir;
 		$this->good_types = ($good_types) ? $good_types : array("audio/mpeg", "audio/ogg", "audio/wav", "audio/mp4", "audio/mp3");
+		$this->settings = $settings;
 	}
 	
 	public function ProcessSingles(PDO &$pdo, $files, User $user) {
-		$path .= "{$audBasePath}/".$user->username."/";
+		$path .= "{$this->uploaddir}/".$user->username."/";
 		echo $path;
 		if (!is_dir($path)) {
 				echo "!!!";
@@ -59,8 +60,9 @@ class MusicUploader {
 			
 			$path .= $file['name'];
 			//echo $path;
-			if (file_exists($path)) {
-				$path = substr($path, 0, strrpos("$path", ".")) . "_" . substr($path, -3);
+			
+			while (file_exists($path)) {
+				$path = substr($path, 0, strrpos("$path", ".")) . "_" . substr($path, -4);
 			}
 			if (!is_uploaded_file($file['tmp_name']) || strpos($path, "..")) {
 				return false;
