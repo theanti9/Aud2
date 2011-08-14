@@ -13,9 +13,10 @@ class Song {
 	private $userid;
 	private $_pdoConn;
 	private $given_data;
-	
-	public function __construct(PDO &$pdo, $id=NULL, $songpath=NULL, $dataArr=NULL, $userid=NULL) {
+	private $settings;
+	public function __construct(PDO &$pdo, $settings, $id=NULL, $songpath=NULL, $dataArr=NULL, $userid=NULL) {
 		$this->_pdoConn = $pdo;
+		$this->settings = $settings;
 		$this->songid = $id;
 		$this->songpath = $songpath;
 		$this->userid = $userid;
@@ -43,7 +44,7 @@ class Song {
 				return false;
 			}
 			if (!$this->given_data) {
-				include "{$audBasePath}/lib/getid3/getid3.php";
+				include_once "{$this->settings->BasePath}/lib/getid3/getid3.php";
 				$getID3 = new getID3;
 				$tag = $getID3->analyze($this->songpath);
 				getid3_lib::CopyTagsToComments($tag);
@@ -124,7 +125,7 @@ class Song {
 				} else {
 					echo "updating values";
 					$sth = $this->_pdoConn->prepare("UPDATE songs SET songpath = :path, artist = :artist, title = :title, album = :album, track = :track, genre = :genre, year = :year WHERE songid = :songid");
-					$sth->bindValue(":path", $this->songpath);
+					$sth->bindValue(":path", implode($this->songpath));
 					$sth->bindValue(":artist", $this->artist);
 					$sth->bindValue(":title", $this->title);
 					$sth->bindValue(":album", $this->album);

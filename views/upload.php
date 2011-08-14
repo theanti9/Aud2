@@ -15,6 +15,7 @@ for($i=0;$i<count($_FILES['file']['error']);$i++) {
 	}
 	$files[] = array("name"=>$file["name"][$i], "tmp_name"=>$file["tmp_name"][$i], "type"=>$file["type"][$i], "error"=>$file["error"][$i]);
 }
+print_r($files);
 // Include everything
 include_once "../settings.php";
 include_once "{$SETTINGS->BasePath}/lib/User.class.php";
@@ -29,11 +30,11 @@ $mu = new MusicUploader($SETTINGS->UploadPath, $SETTINGS->ExtractPath, null, $SE
 $error = false;
 // Handle upload
 if ($_POST['upload_type'] == "direct") {
-	if (!$mu->ProcessSingles(&$pdo, $files, $user)) {
+	if (is_array($mu->ProcessSingles(&$pdo, $files, $user))) {
 		$error = true;
 	}
 } else if ($_POST['upload_type'] == "zip") {
-	if (!$mu->ProcessZips(&$pdo, $files, $user)) {
+	if (is_arra($mu->ProcessZips(&$pdo, $files, $user))) {
 		$error = true;
 	}
 }

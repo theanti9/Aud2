@@ -20,27 +20,23 @@ class MusicUploader {
 	}
 	
 	public function ProcessSingles(PDO &$pdo, $files, User $user) {
-		$path .= "{$this->uploaddir}/".$user->username."/";
-		echo $path;
-		if (!is_dir($path)) {
-				echo "!!!";
-				mkdir($path);
-			}
 		$skipped = array();
 		foreach ($files as $file) {
-
+			$path = "{$this->uploaddir}/".$user->username."/";
+			if (!is_dir($path)) {
+				mkdir($path);
+			}
 			if (!in_array($file['type'],$this->good_types)) {
 				$skipped[] = $file['name'];
-				echo "!!!";
 				continue;
 			}
 			if ($file['error'] > 0) {
 				$skipped[] = $file['name'];
-				echo "!!!";
+				continue;
 			}
 			
 			//$tag['comments_html'] = id3_get_tag($file['tmp_name'], ID3_V2_3);
-			include "getid3/getid3.php";
+			include_once "getid3/getid3.php";
 			$getID3 = new getID3;
 			$tag = $getID3->analyze($file['tmp_name']);
 			getid3_lib::CopyTagsToComments($tag);
@@ -74,6 +70,8 @@ class MusicUploader {
 			$song = new Song($pdo,NULL,$path,$tag['comments_html']);
 			$song->Update();
 		}
+		echo "skipped:";
+		print_r($skipped);
 		if ($skipped) return $skipped;
 		return true;
 	}
@@ -128,8 +126,8 @@ class MusicUploader {
 				}
 				rename($tmppath, $path);
 
-				$song = new Song($pdo,NULL,$path,$tag['comments_html']);
-				$song->Update();
+				$song = new Song($pdo,$this->settings,NULL,$path,$tag['comments_html']);
+				//$song->Update();
 			}
 		}
 		if ($skipped) return $skipped;

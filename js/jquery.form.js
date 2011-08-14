@@ -302,7 +302,7 @@ $.fn.ajaxSubmit = function(options) {
             }
             catch(e){
                 ok = false;
-                $.handleError(opts, xhr, 'error', e);
+                //$.handleError(opts, xhr, 'error', e);
             }
 
             // ordering of these callbacks/triggers is odd, but that's how $.ajax does it
