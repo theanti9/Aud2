@@ -2,14 +2,18 @@
 
 class User {
 	
+	public $username;
+
 	private $_id;
 	private $_phash;
 	private $_pdoConn;
- 	protected $username;
+ 	private $settings;
+
 	
-	public function __construct(PDO &$pdo, $username) {
+	public function __construct(PDO &$pdo, $username, $settings=NULL) {
 		$this->username = $username;
 		$this->_pdoConn = &$pdo;
+		$this->settings = $settings;
 		$this->Update();
 	}
 	
@@ -53,8 +57,10 @@ class User {
 				$sth->execute();
 				if ($sth->rowCount() == 0) {
 					// No user
-					//echo "no user...adding<br />";
-					return $this->Add();
+					if (isset($this->_phash)) {
+						return $this->Add();
+					}
+					return false;
 				} else {
 					$arr = $sth->fetch();
 					$this->_id = $arr['userid'];
@@ -78,14 +84,14 @@ class User {
 	}
 	
 	public function SetPassword($pass) {
-		include_once('BCrypt.class.php');
+		include_once('{$this->settings->BasePath}/lib/BCrypt.class.php');
 		$bc = new Bcrypt(15);
 		$this->_phash = $bc->hash($pass);
 		return $this->Update();
 	}
 	
 	public function ValidatePassword($pass) {
-		include_once('BCrypt.class.php');
+		include_once('{$this->settings->BasePath}/lib/BCrypt.class.php');
 		$bc = new Bcrypt(15);
 		return $bc->verify($pass, $this->_phash);
 		

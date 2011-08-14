@@ -1,7 +1,7 @@
 <?php
-
+session_start();
 // Make sure we have what we need
-if (count($_FILES) == 0 || !isset($_POST['upload_type']) || !isset($_POST['username'])) {
+if (count($_FILES) == 0 || !isset($_POST['upload_type']) || !isset($_SESSION['username'])) {
 	print_r($_FILES);
 	echo "Missing arguments";
 	exit();
@@ -24,7 +24,7 @@ include_once "{$SETTINGS->BasePath}/lib/MusicUploader.class.php";
 
 // Init our objects
 $pdo = new PDO("mysql:host={$SETTINGS->DbHost};dbname={$SETTINGS->DbName}", $SETTINGS->DbUser, $SETTINGS->DbPass);
-$user = new User(&$pdo, $_POST['username']);
+$user = new User(&$pdo, $_SESSION['username']);
 $mu = new MusicUploader($SETTINGS->UploadPath, $SETTINGS->ExtractPath, null, $SETTINGS);
 
 $error = false;
