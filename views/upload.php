@@ -2,6 +2,8 @@
 
 // Make sure we have what we need
 if (count($_FILES) == 0 || !isset($_POST['upload_type']) || !isset($_POST['userid'])) {
+	print_r($_FILES);
+	echo "Missing arguments";
 	exit();
 }
 // Dump non-error files into a new array
@@ -15,14 +17,14 @@ for($i=0;$i<count($_FILES['file']['error']);$i++) {
 }
 // Include everything
 include_once "../settings.php";
-include_once "{$audBasePath}/lib/User.class.php";
-include_once "{$audBasePath}/lib/Song.class.php";
-include_once "{$audBasePath}/lib/MusicUploader.class.php";
+include_once "{$SETTINGS->BasePath}/lib/User.class.php";
+include_once "{$SETTINGS->BasePath}/lib/Song.class.php";
+include_once "{$SETTINGS->BasePath}/lib/MusicUploader.class.php";
 
 // Init our objects
-$pdo = new PDO("mysql:host={$audDbHost};dbname={$audDbName}", $audDbUser, $audDbPass);
+$pdo = new PDO("mysql:host={$SETTINGS->DbHost};dbname={$SETTINGS->DbName}", $SETTINGS->DbUser, $SETTINGS->DbPass);
 $user = new User(&$pdo, $_POST['userid']);
-$mu = new MusicUploader($audUploadPath, $audExtractPath, null);
+$mu = new MusicUploader($SETTINGS->UploadPath, $SETTINGS->ExtractPath, null, $SETTINGS);
 
 $error = false;
 // Handle upload
