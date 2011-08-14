@@ -147,15 +147,12 @@ function makeInitRequests() {
 		libraryJson = data;
 		curPlayList = data;
 		var tbl = [];
-		console.log(data);
 		// Generate the library table
 		$(data).each(function(i,v) {
 			tbl.push(["<tr id='songid_",v.songid,"'><td>",i,"</td><td>",v.title,"</td><td>",v.artist,"</td><td>",v.album,"</td></tr>"].join(''));
 		});
 
 		// Output
-		console.log(tbl);
-		console.log(tbl.join(''));
 		$('#audLibBody').html(tbl.join(''));
 	}, 'json');
 }
