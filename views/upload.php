@@ -4,14 +4,14 @@
 if (count($_FILES) == 0 || !isset($_POST['upload_type']) || !isset($_POST['userid'])) {
 	exit();
 }
-
 // Dump non-error files into a new array
 $files = array();
-foreach ($_FILES as $file) {
-	if ($file['error'] > 0) {
+for($i=0;$i<count($_FILES['file']['error']);$i++) {
+	$file = $_FILES['file'];
+	if ($file['error'][$i] > 0) {
 		continue;
 	}
-	$files[] = $file;
+	$files[] = array("name"=>$file["name"][$i], "tmp_name"=>$file["tmp_name"][$i], "type"=>$file["type"][$i], "error"=>$file["error"][$i]);
 }
 // Include everything
 include_once "../settings.php";

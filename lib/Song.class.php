@@ -43,7 +43,7 @@ class Song {
 				return false;
 			}
 			if (!$this->given_data) {
-				include 'getid3/getid3.php';
+				include "{$audBasePath}/lib/getid3/getid3.php";
 				$getID3 = new getID3;
 				$tag = $getID3->analyze($this->songpath);
 				getid3_lib::CopyTagsToComments($tag);
