@@ -2,6 +2,7 @@
 
 // Make sure we have what we need
 if (count($_FILES) == 0 || !isset($_POST['upload_type']) || !isset($_POST['userid'])) {
+	echo "Missing arguments";
 	exit();
 }
 // Dump non-error files into a new array
