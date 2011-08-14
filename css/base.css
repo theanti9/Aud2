@@ -1,9 +1,9 @@
 
 #audPlayer {
-	display: none;
+	opacity: 0.0;
 }
 
-#audSeek {
+#audSeek{
 	padding: 0px;
 	margin: 0px;
 	width: 500px;
@@ -16,7 +16,25 @@
 }
 
 #audLoading {
-	display: hidden;
+	display: none;
+}
+
+#audBuffer {
+	float: left;
+	display: inline;
+	height: 5px;
+	width: 0%;
+	float: left;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	background-image: url("/img/buffer.png");
+	background-repeat: repeat-x;
+}
+
+.audPage {
+	display: none;
 }
 
 .audCont {
