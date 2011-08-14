@@ -155,6 +155,18 @@ function audBindEvents() {
 		changeSong(curPlayList[curSongIndex].songpath);
 	});
 
+	$("#audVol").slider({max: 1, step:0.01, value:0.5, orientation:'vertical', animate:'fast',
+		start: function(event, ui) {
+			audElem.volume = ui.value;
+		},
+		slide: function(event, ui) {
+			audElem.volume = ui.value;
+		},
+		stop: function(event, ui) {
+			audElem.volume = ui.value;
+		}
+	});
+
 	$("#audUpload").ajaxForm();
 	
 	//// HTML5 audio events
@@ -167,6 +179,7 @@ function audBindEvents() {
 		updateTime();
 		audSupportCheck();
 		audNewSeeker();
+		audElem.volume = 0.7;
 		if(audioSupported && mimesSupported.length){
 			audInit();
 		}
@@ -178,7 +191,7 @@ function audBindEvents() {
 
 function audNewSeeker() {
 	$("#audSeekCont").html('<div class="audCont" id="audSeek"></div>');
-	$('#audSeek').slider({max: Math.floor(audElem.duration),
+	$('#audSeek').slider({max: Math.floor(audElem.duration), animate:'fast',
 		start: function(event, ui) {
 			audElem.seeking = true;
 			// Set lastValue to where we currently are
