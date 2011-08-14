@@ -26,3 +26,7 @@
 .audTime {
 	padding: 0px 7px 0px 7px;
 }
+
+.ui-slider-handle {
+	outline: 0px;
+}

@@ -3,6 +3,8 @@ var audElem = null;
 var audAudio = null;
 var audPlayer = null;
 var audSeek = null;
+var audPlPa = null;
+var seekPaused = null;
 var audTimePassed = null;
 var audTimeLeft = null;
 var lastValue = null;
@@ -37,6 +39,9 @@ function getMime(url) {
 function withMinutes(seconds) {
 	var minutes = Math.floor(seconds / 60);
 	seconds -= Math.floor(minutes * 60);
+	if(seconds != Math.abs(seconds) || minutes != Math.abs(minutes)) {
+		return "00:00";
+	}
 	if(seconds.toString().length == 1) {
 		seconds = ['0', seconds].join('');
 	}
@@ -52,11 +57,15 @@ function updateTime(time, seek) {
 		time = Math.floor(audElem.currentTime);
 	}
 	// time is time we're currently at/seeking to
-	audTimePassed.html(withMinutes(Math.floor(time)));
-	audTimeLeft.html(withMinutes(Math.floor(Math.floor(audElem.duration) - Math.floor(time))));
-	//audSeek.value = time;
-	if(seek && audElem.currentTime != time) {
-		audElem.currentTime = time;
+	var passed = withMinutes(Math.floor(time));
+	var left = withMinutes(Math.floor(Math.floor(audElem.duration) - Math.floor(time)));
+	if(passed && left) {
+		audTimePassed.html(passed);
+		audTimeLeft.html(left);
+		//audSeek.value = time;
+		if(seek && audElem.currentTime != time) {
+			audElem.currentTime = time;
+		}
 	}
 }
 
@@ -71,6 +80,7 @@ function audSetup() {
 	audTimePassed = $('#audTimePassed');
 	audTimeLeft = $('#audTimeLeft');
 	audPlayer = $('#audPlayer');
+	audPlPa = $("#audPlPa");
 	audSeek = $('#audSeek');
 	audBindEvents();
 }
@@ -167,12 +177,32 @@ function audBindEvents() {
 		}
 	});
 
+	$("#audSeekCont").mousedown(function(){
+		if(!audElem.paused) {
+			seekPaused = true;
+			audPlPa.trigger('click');
+		}
+		audElem.seeking = true;
+		updateTime($("#audSeek").slider('value'));
+	})
+
+	$(document).mouseup(function(){
+		audElem.seeking = false;
+		if(audElem.paused && seekPaused) {
+			seekPaused = false;
+			audPlPa.trigger('click');
+		}
+	})
+
 	$("#audUpload").ajaxForm();
 	
 	//// HTML5 audio events
 	//
 	$(audElem).bind("timeupdate", function(){
-		updateTime();
+		if(!audElem.seeking && !audElem.paused) {
+			updateTime();
+			$("#audSeek").slider("value", Math.floor(audElem.currentTime));
+		}
 	});
 
 	$(audElem).bind("loadedmetadata", function(){
@@ -191,9 +221,8 @@ function audBindEvents() {
 
 function audNewSeeker() {
 	$("#audSeekCont").html('<div class="audCont" id="audSeek"></div>');
-	$('#audSeek').slider({max: Math.floor(audElem.duration), animate:'fast',
+	$('#audSeek').slider({value: 0.5, max: Math.floor(audElem.duration), animate:'fast',
 		start: function(event, ui) {
-			audElem.seeking = true;
 			// Set lastValue to where we currently are
 			lastValue = ui.value;
 		},
@@ -207,7 +236,7 @@ function audNewSeeker() {
 		stop: function(event, ui) {
 			updateTime(ui.value, true);
 			lastValue = ui.value;
-			audElem.seeking = false;
+			
 		}
 	});
 }
