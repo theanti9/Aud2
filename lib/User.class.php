@@ -105,7 +105,15 @@ class User {
 			if ($sth->rowCount() == 0) {
 				return json_encode(array());
 			}
-			return json_encode($sth->fetchAll(PDO::FETCH_CLASS, "Song"));
+			$all = $sth->fetchAll();
+			$ret = array();
+			foreach($all as $song) {
+				$ret[] = array( "songid"=>$song['songid'],
+								"title"=>$song['title'],
+								"artist"=>$song['artist'],
+								"album"=>$song['album']);
+			}
+			return json_encode($ret);
 		} catch (PDOException $e) {
 			return $e;
 		}

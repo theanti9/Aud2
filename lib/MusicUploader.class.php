@@ -27,10 +27,12 @@ class MusicUploader {
 				mkdir($path);
 			}
 			if (!in_array($file['type'],$this->good_types)) {
+				echo "type error";
 				$skipped[] = $file['name'];
 				continue;
 			}
 			if ($file['error'] > 0) {
+				echo "file error";
 				$skipped[] = $file['name'];
 				continue;
 			}
@@ -42,12 +44,18 @@ class MusicUploader {
 			getid3_lib::CopyTagsToComments($tag);
 			//print_r($tag);
 			$artistdir = (!empty($tag['comments_html']['artist'][0])) ? $tag['comments_html']['artist'][0] : "Unknown";
+			$path = html_entity_decode($path);
+			$path = preg_replace('/[^(\x20-\x7F)\&\(\);]*/','', $path);
+			print $artistdir . "\n";
 			$path .= $artistdir;
 			$path .= "/";
 			if (!is_dir($path)) {
 				mkdir($path);
 			}
 			$albumdir = (!empty($tag['comments_html']['album'][0])) ? $tag['comments_html']['album'][0] : "Unkown";
+			$path = html_entity_decode($path);
+			$path = preg_replace('/[^(\x20-\x7F)\&\(\);]*/','', $path);
+			print $albumdir . "\n";
 			$path .= $albumdir;
 			$path .= "/";
 			if (!is_dir($path)) {
@@ -63,12 +71,15 @@ class MusicUploader {
 			if (!is_uploaded_file($file['tmp_name']) || strpos($path, "..")) {
 				return false;
 			}
+			$path = html_entity_decode($path);
+			$path = preg_replace('/[^(\x20-\x7F)]*/','', $path);
 			if (!move_uploaded_file($file['tmp_name'], $path)) {
+				echo "move failed";
 				$skipped[] = $file['name'];
+				//continue;
 			}
-			print_r($skipped);
-			$song = new Song($pdo,NULL,$path,$tag['comments_html']);
-			$song->Update();
+			$song = new Song($pdo,$this->settings,NULL,$path,$tag['comments_html'], $user->getID());
+			//$song->Update();
 		}
 		echo "skipped:";
 		print_r($skipped);
