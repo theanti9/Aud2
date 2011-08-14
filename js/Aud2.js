@@ -24,6 +24,7 @@ var mimesUnsupported = new Array();
 // Aud2 Library Vars
 var curSongIndex = 0;
 var userid = null;
+var username = null;
 var libraryJson = null; // Whole library as one.
 var curPlaylist = null; // Keep what is currently playing. Subset of libraryJson
 
@@ -83,6 +84,7 @@ function audSetup() {
 	audPlPa = $("#audPlPa");
 	audSeek = $('#audSeek');
 	audBindEvents();
+	makeInitRequests();
 }
 
 // Checks if audio element - and possible mimetypes - are supported by the browser
@@ -110,17 +112,22 @@ function audInit() {
 
 function makeInitRequests() {
 	// Grab the library
-	$.post('aud2.php', { action:'getLibrary', userid:userid }, function(data) {
+	username = "wite"; // for testing only
+	$.post('views/library.php', { action:'getLibrary', username:username }, function(data) {
 		libraryJson = data;
 		curPlayList = data;
 		var tbl = [];
+		console.log(data);
 		// Generate the library table
-		$.each(data, function(i,v) {
-			tbl.push(["<tr><td>",i,"</td><td>",v.title,"</td><td>",v.artist,"</td><td>",v.album,"</td></tr>"].join(''));
+		$(data).each(function(i,v) {
+			tbl.push(["<tr id='songid_",v.songid,"'><td>",i,"</td><td>",v.title,"</td><td>",v.artist,"</td><td>",v.album,"</td></tr>"].join(''));
 		});
+
 		// Output
+		console.log(tbl);
+		console.log(tbl.join(''));
 		$('#audLibBody').html(tbl.join(''));
-	});
+	}, 'json');
 }
 
 function changeSong(src) {

@@ -19,8 +19,8 @@
 		</div>
 		<div id="audFileUpload">
 			<form action="views/upload.php" method="POST" id="audUpload" enctype="multipart/form-data">
-				<label>File: </label><input type="file" class="multi" name="file[]" accept="m4a|mp3|wav|ogg"/><img id="audLoading" src="img/loading.gif" /><br />
-				<input type="hidden" name="userid" value="1" />
+				<label>File: </label><input type="file" class="multi" name="file[]" accept="m4a|mp3|wav|ogg|zip"/><img id="audLoading" src="img/loading.gif" /><br />
+				<input type="hidden" name="username" value="wite" />
 				<input type="hidden" name="upload_type" value="direct" />
 				<input type="submit" name="upload" />
 				<p>Music file or Zip file only.</p>

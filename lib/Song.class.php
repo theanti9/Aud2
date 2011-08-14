@@ -14,7 +14,7 @@ class Song {
 	private $_pdoConn;
 	private $given_data;
 	private $settings;
-	public function __construct(PDO &$pdo, $settings, $id=NULL, $songpath=NULL, $dataArr=NULL, $userid=NULL) {
+	public function __construct(PDO &$pdo=NULL, Settings $settings, $id=NULL, $songpath=NULL, $dataArr=NULL, $userid=NULL) {
 		$this->_pdoConn = $pdo;
 		$this->settings = $settings;
 		$this->songid = $id;
@@ -26,6 +26,7 @@ class Song {
 			}
 			$this->given_data = true;
 		}
+		echo "initialized";
 		$this->Update();
 	}
 	
@@ -44,6 +45,7 @@ class Song {
 				return false;
 			}
 			if (!$this->given_data) {
+				print "data given";
 				include_once "{$this->settings->BasePath}/lib/getid3/getid3.php";
 				$getID3 = new getID3;
 				$tag = $getID3->analyze($this->songpath);
@@ -58,20 +60,22 @@ class Song {
 			if ($this->userid == NULL) {
 				return false;
 			}
-			$sth = $this->_pdoConn->prepare("INSERT INTO songs VALUES (NULL, :userid, :path, :artist, :title, :album, :track, :genre, :year)");
+			echo $this->songpath;
+			$sth = $this->_pdoConn->prepare("INSERT INTO songs VALUES (NULL, :userid, :songpath, :artist, :title, :album, :track, :genre, :year)");
 			$sth->bindValue(":userid",$this->userid);
-			$sth->bindValue(":path", $this->songpath);
-			$sth->bindValue(":artist", $this->artist);
-			$sth->bindValue(":title", $this->title);
-			$sth->bindValue(":album", $this->album);
-			$sth->bindValue(":track", $this->track);
-			$sth->bindValue(":genre", $this->genre);
-			$sth->bindValue(":year", $this->year);
-			
+			$sth->bindValue(":songpath", $this->_pdoConn->quote($this->songpath));
+			$sth->bindValue(":artist", $this->_pdoConn->quote($this->artist));
+			$sth->bindValue(":title", $this->_pdoConn->quote($this->title));
+			$sth->bindValue(":album", $this->_pdoConn->quote($this->album));
+			$sth->bindValue(":track", $this->_pdoConn->quote($this->track));
+			$sth->bindValue(":genre", $this->_pdoConn->quote($this->genre));
+			$sth->bindValue(":year", $this->_pdoConn->quote($this->year));
+			//$sth->debugDumpParams();
 			if (!$sth->execute()) {
 				throw new Exception("Add failed..<br />".print_r($sth->errorInfo()));
 			}
 			$this->songid = $this->_pdoConn->lastInsertId();
+			print "added";
 			return true;
 			
 		} catch (PDOException $e) {
@@ -82,11 +86,13 @@ class Song {
 	public function Update() {
 		try{
 			if ($this->songid == NULL) {
+				print "no id";
 				if ($this->songpath == NULL) {
 					return false;
 				}
 				$sth = $this->_pdoConn->query("SELECT * FROM songs WHERE songpath = '" . $this->songpath . "'");
 				if ($sth->rowCount() == 0) {
+					print "adding";
 					return $this->Add();
 				} else {
 					$arr = $sth->fetch();
@@ -125,7 +131,7 @@ class Song {
 				} else {
 					echo "updating values";
 					$sth = $this->_pdoConn->prepare("UPDATE songs SET songpath = :path, artist = :artist, title = :title, album = :album, track = :track, genre = :genre, year = :year WHERE songid = :songid");
-					$sth->bindValue(":path", implode($this->songpath));
+					$sth->bindValue(":path", $this->songpath);
 					$sth->bindValue(":artist", $this->artist);
 					$sth->bindValue(":title", $this->title);
 					$sth->bindValue(":album", $this->album);
@@ -166,6 +172,12 @@ class Song {
 		return "";
 	}
 	
+}
+
+class LibrarySong extends Song {
+	public function __construct() {
+		
+	}
 }
 
 
