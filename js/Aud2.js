@@ -16,8 +16,8 @@ var sessionSongs = 0;
 var lastValue = null;
 var seekPaused = null;
 var audioSupported = false;
-var mimesSupported = [];
-var mimesUnsupported = [];
+var mimesSupported = new Array();
+var mimesUnsupported = new Array();
 //// Useful audElem properties:
 // duration
 // currentTime
@@ -41,8 +41,6 @@ var curPlaylist = null; // Keep what is currently playing. Subset of libraryJson
 // Returns mimetype from url
 function getMime(url) {
 	var response = $.ajax({type: "HEAD",url: url, async: false}).getResponseHeader('Content-Type');
-	console.log(response);
-	//console.log("mime="+mime);
 	return response;
 }
 
@@ -110,6 +108,8 @@ function saveStats(callback) {
 function audSupportCheck() {
 	if(!!document.createElement('audio').canPlayType) {
 		audioSupported = true;
+		mimesSupported = new Array();
+		mimesUnsupported = new Array();
 		var mimes = ['audio/mpeg;', 'audio/mp3;', 'audio/ogg; codecs="vorbis"', 'audio/wav; codecs="1"', 'audio/mp4; codecs="mp4a.40.2"'];
 		for(i=0;i<mimes.length;++i) {
 			if(!!(audElem.canPlayType(mimes[i]).replace(/no/, ''))) {
@@ -153,12 +153,11 @@ function makeInitRequests() {
 //// Other
 //
 function changeSong(src) {
-	console.log("dicks");
 	saveStats(function() {
 		var mime = getMime(src);
-		console.log(mime);
+		console.log("mime: '" + mime + "'");
 		console.log(mimesSupported);
-		if(mime in mimesSupported) {
+		if(mimesSupported.indexOf(mime) != -1) {
 			console.log(audElem);
 			audElem.pause();
 			audElem.src = src;
@@ -166,7 +165,7 @@ function changeSong(src) {
 			audElem.play();
 		}
 		else {
-			audAudio.append([error(["Your browser does not support the audio type", mime].join(''))]);
+			audAudio.append(error(["Your browser does not support the audio type", mime].join('')));
 		}
 	});
 }
