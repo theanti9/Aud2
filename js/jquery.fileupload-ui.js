@@ -98,8 +98,11 @@
             },
             // Callback for successful uploads:
             done: function (e, data) {
+                console.log("done");
                 var that = $(this).data('fileupload');
                 if (data.context) {
+                    console.log("context");
+                    console.log(data);
                     data.context.each(function (index) {
                         var file = ($.isArray(data.result) &&
                                 data.result[index]) || {error: 'emptyResult'};
@@ -117,6 +120,7 @@
                         });
                     });
                 } else {
+                    console.log("no context");
                     that._renderDownload(data.result)
                         .css('display', 'none')
                         .appendTo($(this).find('.files'))
@@ -128,6 +132,7 @@
             },
             // Callback for failed (abort or error) uploads:
             fail: function (e, data) {
+                console.log("fail");
                 var that = $(this).data('fileupload');
                 that._adjustMaxNumberOfFiles(data.files.length);
                 if (data.context) {
