@@ -9,12 +9,27 @@ session_start();
 		<link rel="stylesheet" type="text/css" href="css/jquery.fileupload-ui.css" />
 	</head>
 	<body>
+		<div class="audPage" id="audPageRegister">
+			<div>
+				<form id="audRegister" action="/views/register.php" method="POST">
+					<h2>Register</h2><br />
+					<label>Username:</label><input id="regUser" type="text" name="username" />
+					<label>Password:</label><input id="regPass" type="password" name="password" /><br />
+					<label>Confirm:</label><input id="regConf" type="password" name="confirm" /><br />
+					<input id="regSub" type="submit" name="submit" value="Register" /><br />
+				</form>
+				<button id="audLoginButton">Or Login</button>
+			</div>
+		</div>
 		<div class="audPage" id="audPageLogin">
 			<div>
 				<form id="audLogin" action="/views/login.php" method="POST">
-					<label>Username:</label><input type="text" name="username" />
-					<label>Password:</label><input type="password" name="password" />
+					<h2>Login</h2><br />
+					<label>Username:</label><input id="logUser" type="text" name="username" />
+					<label>Password:</label><input id="logPass" type="password" name="password" />
+					<input id="logSub" type="submit" name="submit" value="Login" /><br />
 				</form>
+				<button id="audRegButton">Or Register</button>
 			</div>
 		</div>
 		<div class="audPage" id="audPageLoading">
@@ -131,11 +146,11 @@ session_start();
 				</td>
 			</tr>
 		</script>
-		<script src="js/Aud2.js"></script>
 		<script src="js/jquery.form.js"></script>
 		<script src="js/jquery.fileupload.js"></script>
 		<script src="js/jquery.fileupload-ui.js"></script>
 		<script src="js/jquery.iframe-transport.js"></script>
 		<script src="js/application.js"></script>
+		<script src="js/AudPreloader.js"></script>
 	</footer>
 </html>

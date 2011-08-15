@@ -132,13 +132,15 @@ function audSupportCheck() {
 		}
 	}
 	else {
-		$('audPlayer').html('<p class="ui-state-error">Sorry, your browser does not support the audio element.</p>').fadeIn();
+		$('audPlayer').html(error("Sorry, your browser does not support the audio element.")).fadeIn();
 	}
 }
 
 function audInit() {
-	$("#audPageLoaded").fadeIn("fast", function(){
-		audPlayer.animate({'opacity': '1.0'});
+	$("#audPageLoading").fadeOut("fast", function(){
+		$("#audPageLoaded").fadeIn('fast', function(){
+			audPlayer.animate({'opacity': '1.0'});
+		});
 	});
 }
 
@@ -170,7 +172,7 @@ function changeSong(src) {
 			audElem.play();
 		}
 		else {
-			audAudio.append(['<div class="ui-state-error">Your browser does not support the audio type "', mime, '"</div>'].join(''))
+			audAudio.append([error(["Your browser does not support the audio type", mime].join('')))
 		}
 	});
 }
@@ -230,12 +232,6 @@ function audBindEvents() {
 			// Clear Form
 		}
 	});
-
- $( "#tabcontent-2 button:first" ).button({
-					icons: {
-						primary: "ui-icon-circle-arrow-s"
-					}
-				})
 				
 	$("#audVolButton").button({
 		icons: {
@@ -267,11 +263,6 @@ function audBindEvents() {
 
 	// Save statistics before user leaves the page
 	window.onbeforeunload = saveStats();
-
-	// Login Form
-	$("#audLogin").ajaxForm({success: function(response){
-		alert("[" + a + "]");
-	}});
 	
 	//// HTML5 audio events
 	//
@@ -292,7 +283,7 @@ function audBindEvents() {
 			audInit();
 		}
 		else {
-			audPlayer.html('<div class="ui-state-error">Sorry, your browser does not support the HTML5 audio tag.</div>');
+			audPlayer.html(error("Sorry, your browser does not support the HTML5 audio tag."));
 		}
 	});
 
@@ -356,5 +347,7 @@ $(document).ready(function(){
 	if($.browser.msie) {
 		alert("IE Not Supported");
 	}
-	audSetup();
+	else {
+		audSetup();
+	}
 });
