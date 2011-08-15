@@ -4,24 +4,25 @@ session_start();
 
 $file_name = isset($_REQUEST['file']) ? basename(stripslashes($_REQUEST['file'])) : null; 
 if ($file_name) {
-	
+	echo json_encode(array(array("name"=>NULL, "tmp_name"=>NULL, "type"=>NULL, "error"=>NULL)));
+	exit();
 }
 
-if (count($_FILES) == 0 || !isset($_POST['upload_type']) || !isset($_SESSION['username'])) {
+if (count($_FILES) == 0 || !isset($_SESSION['username'])) {
 	//print_r($_FILES);
 	//echo "Missing arguments";
 	exit();
 }
+
 // Dump non-error files into a new array
 $files = array();
-for($i=0;$i<count($_FILES['file']['error']);$i++) {
-	$file = $_FILES['file'];
+for($i=0;$i<count($_FILES['files']['error']);$i++) {
+	$file = $_FILES['files'];
 	if ($file['error'][$i] > 0) {
 		continue;
 	}
-	$files[] = array("name"=>$file["name"][$i], "tmp_name"=>$file["tmp_name"][$i], "type"=>$file["type"][$i], "error"=>$file["error"][$i]);
+	$files[] = array("name"=>$file["name"][$i], "tmp_name"=>$file["tmp_name"][$i], "type"=>$file["type"][$i], "error"=>$file["error"][$i], "size"=>$file["size"][$i]);
 }
-print_r($files);
 // Include everything
 include_once "../settings.php";
 include_once "{$SETTINGS->BasePath}/lib/User.class.php";

@@ -24,8 +24,8 @@ class MusicUploader {
 		$endfiles = array();
 		foreach ($files as $file) {
 			$path = $user->username."/";
-			if (!is_dir($path)) {
-				mkdir($path);
+			if (!is_dir($this->uploaddir."/".$path)) {
+				mkdir($this->uploaddir."/".$path);
 			}
 			if (!in_array($file['type'],$this->good_types)) {
 				echo "type error";
@@ -47,26 +47,24 @@ class MusicUploader {
 			$artistdir = (!empty($tag['comments_html']['artist'][0])) ? $tag['comments_html']['artist'][0] : "Unknown";
 			$path = html_entity_decode($path);
 			$path = preg_replace('/[^(\x20-\x7F)\&\(\);]*/','', $path);
-			print $artistdir . "\n";
 			$path .= $artistdir;
 			$path .= "/";
-			if (!is_dir($path)) {
-				mkdir($path);
+			if (!is_dir($this->uploaddir."/".$path)) {
+				mkdir($this->uploaddir."/".$path);
 			}
 			$albumdir = (!empty($tag['comments_html']['album'][0])) ? $tag['comments_html']['album'][0] : "Unkown";
 			$path = html_entity_decode($path);
 			$path = preg_replace('/[^(\x20-\x7F)\&\(\);]*/','', $path);
-			print $albumdir . "\n";
 			$path .= $albumdir;
 			$path .= "/";
-			if (!is_dir($path)) {
-				mkdir($path);
+			if (!is_dir($this->uploaddir."/".$path)) {
+				mkdir($this->uploaddir."/".$path);
 			}
 			
 			$path .= $file['name'];
 			//echo $path;
 			
-			while (file_exists($path)) {
+			while (file_exists($this->uploaddir."/".$path)) {
 				$path = substr($path, 0, strrpos("$path", ".")) . "_" . substr($path, -4);
 			}
 			if (!is_uploaded_file($file['tmp_name']) || strpos($path, "..")) {
@@ -75,14 +73,15 @@ class MusicUploader {
 			$path = html_entity_decode($path);
 			$path = preg_replace('/[^(\x20-\x7F)]*/','', $path);
 			if (!move_uploaded_file($file['tmp_name'], "{$this->uploaddir}/".$path)) {
-				echo "move failed";
+				echo "move to {$this->uploaddir}/{$path} failed";
 				$skipped[] = $file['name'];
 				//continue;
 			}
-			$endfiles[] = array("name"=>$file['name'], "size"=>$file['size'], "url"=>$path, "thumbnail_url"=>NULL, "delete_type"=>"DELETE")
-			$song = lnew Song($pdo,$this->settings,NULL,"{$this->uploaddir}/".$path,$tag['comments_html'], $user->getID());
+			$endfiles[] = array("name"=>$file['name'], "size"=>$file['size'], "url"=>"http://localhost:8888/upload/".$path, "thumbnail_url"=>NULL, "delete_type"=>"DELETE");
+			$song = new Song($pdo,$this->settings,NULL,"{$this->uploaddir}/".$path,$tag['comments_html'], $user->getID());
 			//$song->Update();
 		}
+		//print_r($endfiles);
 		return $endfiles;
 		// echo "skipped:";
 		//print_r($skipped);

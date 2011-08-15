@@ -26,7 +26,7 @@ class Song {
 			}
 			$this->given_data = true;
 		}
-		echo "initialized";
+		//echo "initialized";
 		$this->Update();
 	}
 	
@@ -45,7 +45,6 @@ class Song {
 				return false;
 			}
 			if (!$this->given_data) {
-				print "data given";
 				include_once "{$this->settings->BasePath}/lib/getid3/getid3.php";
 				$getID3 = new getID3;
 				$tag = $getID3->analyze($this->songpath);
@@ -60,7 +59,7 @@ class Song {
 			if ($this->userid == NULL) {
 				return false;
 			}
-			echo $this->songpath;
+			//echo $this->songpath;
 			$sth = $this->_pdoConn->prepare("INSERT INTO songs VALUES (NULL, :userid, :songpath, :artist, :title, :album, :track, :genre, :year)");
 			$sth->bindValue(":userid",$this->userid);
 			$sth->bindValue(":songpath", $this->_pdoConn->quote($this->songpath));
@@ -75,7 +74,6 @@ class Song {
 				throw new Exception("Add failed..<br />".print_r($sth->errorInfo()));
 			}
 			$this->songid = $this->_pdoConn->lastInsertId();
-			print "added";
 			return true;
 			
 		} catch (PDOException $e) {
@@ -86,13 +84,15 @@ class Song {
 	public function Update() {
 		try{
 			if ($this->songid == NULL) {
-				print "no id";
 				if ($this->songpath == NULL) {
 					return false;
 				}
-				$sth = $this->_pdoConn->query("SELECT * FROM songs WHERE songpath = '" . $this->songpath . "'");
+				$sth = $this->_pdoConn->prepare("SELECT * FROM songs WHERE songpath = :songpath");
+				$sth->bindValue(":songpath", $this->_pdoConn->quote($this->songpath));
+				if (!$sth->execute()) {
+					throw new Exception("Add failed..<br />".print_r($sth->errorInfo()));
+				}
 				if ($sth->rowCount() == 0) {
-					print "adding";
 					return $this->Add();
 				} else {
 					$arr = $sth->fetch();
@@ -129,7 +129,7 @@ class Song {
 						return true;
 					}
 				} else {
-					echo "updating values";
+					//echo "updating values";
 					$sth = $this->_pdoConn->prepare("UPDATE songs SET songpath = :path, artist = :artist, title = :title, album = :album, track = :track, genre = :genre, year = :year WHERE songid = :songid");
 					$sth->bindValue(":path", $this->songpath);
 					$sth->bindValue(":artist", $this->artist);

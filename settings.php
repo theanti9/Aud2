@@ -1,7 +1,7 @@
 <?php
 
-//$audBasePath = "/Users/wil/git/Aud2/";
-$audBasePath = "/Users/ryan/Dropbox/github/Aud2";
+$audBasePath = "/Users/wil/git/Aud2";
+//$audBasePath = "/Users/ryan/Dropbox/github/Aud2";
 
 include_once "{$audBasePath}/lib/Settings.class.php";
 
