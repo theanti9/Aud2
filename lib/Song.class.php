@@ -62,13 +62,13 @@ class Song {
 			//echo $this->songpath;
 			$sth = $this->_pdoConn->prepare("INSERT INTO songs VALUES (NULL, :userid, :songpath, :artist, :title, :album, :track, :genre, :year)");
 			$sth->bindValue(":userid",$this->userid);
-			$sth->bindValue(":songpath", $this->_pdoConn->quote($this->songpath));
-			$sth->bindValue(":artist", $this->_pdoConn->quote($this->artist));
-			$sth->bindValue(":title", $this->_pdoConn->quote($this->title));
-			$sth->bindValue(":album", $this->_pdoConn->quote($this->album));
-			$sth->bindValue(":track", $this->_pdoConn->quote($this->track));
-			$sth->bindValue(":genre", $this->_pdoConn->quote($this->genre));
-			$sth->bindValue(":year", $this->_pdoConn->quote($this->year));
+			$sth->bindValue(":songpath", $this->songpath);
+			$sth->bindValue(":artist", $this->artist);
+			$sth->bindValue(":title", $this->title);
+			$sth->bindValue(":album", $this->album);
+			$sth->bindValue(":track", $this->track);
+			$sth->bindValue(":genre", $this->genre);
+			$sth->bindValue(":year", $this->year);
 			//$sth->debugDumpParams();
 			if (!$sth->execute()) {
 				throw new Exception("Add failed..<br />".print_r($sth->errorInfo()));

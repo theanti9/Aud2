@@ -31,7 +31,7 @@ include_once "{$SETTINGS->BasePath}/lib/MusicUploader.class.php";
 
 // Init our objects
 $pdo = new PDO("mysql:host={$SETTINGS->DbHost};dbname={$SETTINGS->DbName}", $SETTINGS->DbUser, $SETTINGS->DbPass);
-$user = new User(&$pdo, $_SESSION['username']);
+$user = new User(&$pdo, $_SESSION['username'], $SETTINGS);
 $mu = new MusicUploader($SETTINGS->UploadPath, $SETTINGS->ExtractPath, null, $SETTINGS);
 
 $error = false;

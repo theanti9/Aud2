@@ -97,7 +97,7 @@ function saveStats(callback) {
 	try {
 		callback();
 	} catch (e) {
-		console.log('Failed callback '+e);
+		// nothing
 	}
 }
 
@@ -155,13 +155,10 @@ function makeInitRequests() {
 function changeSong(src) {
 	saveStats(function() {
 		var mime = getMime(src);
-		console.log("mime: '" + mime + "'");
-		console.log(mimesSupported);
 		if(mimesSupported.indexOf(mime) != -1) {
-			console.log(audElem);
 			audElem.pause();
 			audElem.src = src;
-			audElem.load();
+			//audElem.load();
 			audElem.play();
 		}
 		else {
@@ -338,7 +335,8 @@ function audBindEvents() {
 	});
 
 	$('.songRow').live('dblclick',function(event){
-		var toplayid = parseInt($(this).attr('id').substring(7),10);
+		//var toplayid = parseInt($(this).attr('id').substring(7),10);
+		var toplayid = parseInt($(this).children('td').first().text(), 10)+1;
 		changeSong(libraryJson[toplayid-1].url);
 	});
 }
