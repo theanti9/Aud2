@@ -19,19 +19,19 @@ $(function () {
     $('#fileupload').fileupload();
 
     // Load existing files:
-    $.getJSON($('#fileupload form').prop('action'), function (files) {
-        if(!files) {
-            return false;
-        }
-        var fu = $('#fileupload').data('fileupload');
-        fu._adjustMaxNumberOfFiles(-files.length);
-        fu._renderDownload(files)
-            .appendTo($('#fileupload .files'))
-            .fadeIn(function () {
-                // Fix for IE7 and lower:
-                $(this).show();
-            });
-    });
+    // $.getJSON($('#fileupload form').prop('action'), function (files) {
+    //     if(!files) {
+    //         return false;
+    //     }
+    //     var fu = $('#fileupload').data('fileupload');
+    //     fu._adjustMaxNumberOfFiles(-files.length);
+    //     fu._renderDownload(files)
+    //         .appendTo($('#fileupload .files'))
+    //         .fadeIn(function () {
+    //             // Fix for IE7 and lower:
+    //             $(this).show();
+    //         });
+    // });
 
     // Open download dialogs via iframes,
     // to prevent aborting current uploads:

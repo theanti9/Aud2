@@ -81,9 +81,9 @@ session_start();
 			</div>
 		</div>
 		<footer>
-		<script src="js/jquery-1.6.2.min.js"></script>
-		<script src="js/jquery-ui-1.8.15.custom.min.js"></script>
-		<script src="js/jquery.tmpl.min.js"></script>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/jquery-ui.min.js"></script>
+		<script src="js/jquery.tmpl.js"></script>
 		<script id="template-upload" type="text/x-jquery-tmpl">
 			<tr class="template-upload{{if error}} ui-state-error{{/if}}">
 				<td class="preview"></td>
@@ -106,8 +106,8 @@ session_start();
 			</tr>
 		</script>
 		<script id="template-download" type="text/x-jquery-tmpl">
-			<tr class="template-download{{if error}} ui-state-error{{/if}}">
-				{{if error}}
+			<tr class="template-download{{if [1, 2, 3, 4, 5, 6, 7, 'maxFileSize', 'minFileSize', 'acceptFileTypes', 'maxNumberOfFiles', 'uploadedBytes', 'emptyResult', '1', '2', '3', '4', '5', '6', '7'].indexOf(error) != -1}} ui-state-error{{/if}}">
+				{{if [1, 2, 3, 4, 5, 6, 7, 'maxFileSize', 'minFileSize', 'acceptFileTypes', 'maxNumberOfFiles', 'uploadedBytes', 'emptyResult', "1", "2", "3", "4", "5", "6", "7"].indexOf(error) != -1}}
 					<td></td>
 					<td class="name">${name}</td>
 					<td class="size">${sizef}</td>

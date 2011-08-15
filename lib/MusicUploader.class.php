@@ -77,7 +77,7 @@ class MusicUploader {
 				$skipped[] = $file['name'];
 				//continue;
 			}
-			$endfiles[] = array("name"=>$file['name'], "size"=>$file['size'], "url"=>"http://localhost:8888/upload/".$path, "thumbnail_url"=>NULL, "delete_type"=>"DELETE");
+			$endfiles[] = array("name"=>$file['name'], "size"=>$file['size'], "url"=>"http://localhost:8888/upload/".$path, "thumbnail_url"=>"http://aux4.iconpedia.net/uploads/8421418941663827560.png", "delete_type"=>"DELETE");
 			$song = new Song($pdo,$this->settings,NULL,"{$this->uploaddir}/".$path,$tag['comments_html'], $user->getID());
 			//$song->Update();
 		}
