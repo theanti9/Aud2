@@ -135,7 +135,7 @@ function audSupportCheck() {
 }
 
 function audInit() {
-	$("#audPageLoaded").fadeIn("slow", function(){
+	$("#audPageLoaded").fadeIn("fast", function(){
 		audPlayer.animate({'opacity': '1.0'});
 	});
 }
@@ -215,6 +215,36 @@ function audBindEvents() {
 		}
 	});
 
+	//Music Uploads
+	$("#audMusicUpload").dialog({autoOpen: false, show: 'drop', hide: 'drop', height: $(window).height() - 200, width: 550, draggable: false, resizable: false, modal: true, buttons: {
+			"Upload": function() {
+				$("#audMusicUploadForm")
+			},
+			"Cancel": function() {
+				$(this).dialog("close");
+			}
+		},
+		close: function() {
+			$('input:file').MultiFile('reset');
+		}
+	});
+
+ $( "#tabcontent-2 button:first" ).button({
+					icons: {
+						primary: "ui-icon-circle-arrow-s"
+					}
+				})
+				
+	$("#audVolButton").button({
+		icons: {
+			primary: "ui-icon-volume-on"
+		}
+	})
+
+	$("#audUpload").button().click(function(){
+		$("#audMusicUpload").dialog('open');
+	});
+
 	// Mousedown + Mouseup for seeking
 	$("#audSeekCont").mousedown(function(){
 		if(!audElem.paused) {
@@ -236,8 +266,10 @@ function audBindEvents() {
 	// Save statistics before user leaves the page
 	window.onbeforeunload = saveStats();
 
-	// Initiate ajax form submit plugin
-	$("#audUpload").ajaxForm();
+	// Login Form
+	$("#audLogin").ajaxForm({success: function(response){
+		alert("[" + a + "]");
+	}});
 	
 	//// HTML5 audio events
 	//
