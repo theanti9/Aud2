@@ -21,8 +21,9 @@ class MusicUploader {
 	
 	public function ProcessSingles(PDO &$pdo, $files, User $user) {
 		$skipped = array();
+		$endfiles = array();
 		foreach ($files as $file) {
-			$path = "{$this->uploaddir}/".$user->username."/";
+			$path = $user->username."/";
 			if (!is_dir($path)) {
 				mkdir($path);
 			}
@@ -73,18 +74,20 @@ class MusicUploader {
 			}
 			$path = html_entity_decode($path);
 			$path = preg_replace('/[^(\x20-\x7F)]*/','', $path);
-			if (!move_uploaded_file($file['tmp_name'], $path)) {
+			if (!move_uploaded_file($file['tmp_name'], "{$this->uploaddir}/".$path)) {
 				echo "move failed";
 				$skipped[] = $file['name'];
 				//continue;
 			}
-			$song = new Song($pdo,$this->settings,NULL,$path,$tag['comments_html'], $user->getID());
+			$endfiles[] = array("name"=>$file['name'], "size"=>$file['size'], "url"=>$path, "thumbnail_url"=>NULL, "delete_type"=>"DELETE")
+			$song = lnew Song($pdo,$this->settings,NULL,"{$this->uploaddir}/".$path,$tag['comments_html'], $user->getID());
 			//$song->Update();
 		}
-		echo "skipped:";
-		print_r($skipped);
-		if ($skipped) return $skipped;
-		return true;
+		return $endfiles;
+		// echo "skipped:";
+		//print_r($skipped);
+		//if ($skipped) return $skipped;
+		//return true;
 	}
 	
 	public function ProcessZips(PDO &$pdo, $files, User $user) {

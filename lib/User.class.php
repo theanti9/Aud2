@@ -99,14 +99,14 @@ class User {
 	
 	public function GetLibraryJson() {
 		if (!$this->_pdoConn) {
-			return false;
+			throw new Exception("Invalid database object");
 		}
 		try {
 			include_once("Song.class.php");
 			$sth = $this->_pdoConn->prepare("SELECT * FROM songs WHERE userid = :userid");
 			$sth->bindValue(":userid", $this->_id);
 			if (!$sth->execute()) {
-				return false;
+				throw new Exception($sth->errorInfo()[2]);
 			}
 			if ($sth->rowCount() == 0) {
 				return json_encode(array());
