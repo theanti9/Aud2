@@ -84,14 +84,14 @@ class User {
 	}
 	
 	public function SetPassword($pass) {
-		include_once('{$this->settings->BasePath}/lib/BCrypt.class.php');
+		include_once("{$this->settings->BasePath}/lib/BCrypt.class.php");
 		$bc = new Bcrypt(15);
 		$this->_phash = $bc->hash($pass);
 		return $this->Update();
 	}
 	
 	public function ValidatePassword($pass) {
-		include_once('{$this->settings->BasePath}/lib/BCrypt.class.php');
+		include_once("{$this->settings->BasePath}/lib/BCrypt.class.php");
 		$bc = new Bcrypt(15);
 		return $bc->verify($pass, $this->_phash);
 		
@@ -102,11 +102,12 @@ class User {
 			throw new Exception("Invalid database object");
 		}
 		try {
-			include_once("Song.class.php");
+			include_once("{$this->settings->BasePath}/lib/Song.class.php");
 			$sth = $this->_pdoConn->prepare("SELECT * FROM songs WHERE userid = :userid");
 			$sth->bindValue(":userid", $this->_id);
 			if (!$sth->execute()) {
-				throw new Exception($sth->errorInfo()[2]);
+				$info = $sth->errorInfo();
+				throw new Exception($info[2]);
 			}
 			if ($sth->rowCount() == 0) {
 				return json_encode(array());
@@ -117,7 +118,8 @@ class User {
 				$ret[] = array( "songid"=>$song['songid'],
 								"title"=>$song['title'],
 								"artist"=>$song['artist'],
-								"album"=>$song['album']);
+								"album"=>$song['album'],
+								"url"=>substr($song['songpath'],strlen($this->settings->BasePath)));
 			}
 			return json_encode($ret);
 		} catch (PDOException $e) {

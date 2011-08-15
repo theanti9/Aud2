@@ -27,14 +27,14 @@ $(document).ready(function(){
 		// Registration Form
 		$("#audRegister").ajaxForm({dataType: 'json',
 			beforeSubmit: function() {
-				console.log($("#regPass").val());
-				console.log($("#regConf").val());
+				// console.log($("#regPass").val());
+				// console.log($("#regConf").val());
 				if($("#regPass").val() != $("#regConf").val()) {
 					$("#audRegister > .ui-state-error").remove();
 					$("#audRegister").prepend(error("Passwords do not match"));
 					return false;
 				}
-				else if($("#regPass").val() == "" || $("#regConf").val() == "" || $("#regUser").val() == "") {
+				else if($("#regPass").val() === "" || $("#regConf").val() === "" || $("#regUser").val() === "") {
 					$("#audRegister > .ui-state-error").remove();
 					$("#audRegister").prepend(error("Please fill out all fields"));
 					return false;
@@ -47,8 +47,9 @@ $(document).ready(function(){
 				}
 				else {
 					$("#audPageRegister").fadeOut('fast', function(){
-						$("#audPageLoading").fadeIn('fast');
-						$("footer").append('<script src="js/Aud2.js"></script>');
+						$("#audPageLoading").fadeIn('fast', function(){
+							$.getScript('js/Aud2.js');
+						});
 					});
 				}
 			}
@@ -57,7 +58,7 @@ $(document).ready(function(){
 		// Login Form
 		$("#audLogin").ajaxForm({dataType: 'json',
 			beforeSubmit: function() {
-				if($("#logUser").val() == "" || $("#logPass").val() == "") {
+				if($("#logUser").val() === "" || $("#logPass").val() === "") {
 					$("#audLogin > .ui-state-error").remove();
 					$("#audLogin").prepend(error("Please fill out all fields"));
 					return false;
@@ -70,8 +71,9 @@ $(document).ready(function(){
 				}
 				else {
 					$("#audPageLogin").fadeOut('fast', function(){
-						$("#audPageLoading").fadeIn('fast');
-						$("footer").append('<script src="js/Aud2.js"></script>');
+						$("#audPageLoading").fadeIn('fast', function(){
+							$.getScript('js/Aud2.js');
+						});
 					});
 				}
 			}

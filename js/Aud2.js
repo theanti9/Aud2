@@ -40,8 +40,10 @@ var curPlaylist = null; // Keep what is currently playing. Subset of libraryJson
 //
 // Returns mimetype from url
 function getMime(url) {
-	var mime = $.ajax({type: "HEAD",url: url, success: function(data, status, xhr){}}).getResponseHeader("Content-Type");
-	return mime;
+	var response = $.ajax({type: "HEAD",url: url, async: false}).getResponseHeader('Content-Type');
+	console.log(response);
+	//console.log("mime="+mime);
+	return response;
 }
 
 function withMinutes(seconds) {
@@ -94,28 +96,15 @@ function saveStats(callback) {
 	// TODO: Send sessionSongs + songSeconds to PHP
 
 	sessionSongs = 0;
-	if (callback && typeof(callback) === "function") {
+	try {
 		callback();
+	} catch (e) {
+		console.log('Failed callback '+e);
 	}
 }
 
 
-////Startup
-//
-// Set up some elements + variables
-function audSetup() {
-	audAudio = $('#audAudio');
-	audAudio.html('<audio id="aud2Audio" src="http://theanti9.com/Angelica.mp3" autobuffer></audio>');
-	audElem = document.getElementById('aud2Audio');
-	audTimePassed = $('#audTimePassed');
-	audTimeLeft = $('#audTimeLeft');
-	audPlayer = $('#audPlayer');
-	audPlPa = $("#audPlPa");
-	audSeek = $('#audSeek');
-	audBuffer = $("#audBuffer");
-	audBindEvents();
-	makeInitRequests();
-}
+
 
 // Checks if audio element - and possible mimetypes - are supported by the browser
 function audSupportCheck() {
@@ -153,7 +142,7 @@ function makeInitRequests() {
 		var tbl = [];
 		// Generate the library table
 		$(data).each(function(i,v) {
-			tbl.push(["<tr id='songid_",v.songid,"'><td>",i,"</td><td>",v.title,"</td><td>",v.artist,"</td><td>",v.album,"</td></tr>"].join(''));
+			tbl.push(["<tr class='songRow' id='songid_",v.songid,"'><td>",i,"</td><td>",v.title,"</td><td>",v.artist,"</td><td>",v.album,"</td></tr>"].join(''));
 		});
 
 		// Output
@@ -164,18 +153,66 @@ function makeInitRequests() {
 //// Other
 //
 function changeSong(src) {
+	console.log("dicks");
 	saveStats(function() {
-		var mime = getMime(url);
+		var mime = getMime(src);
+		console.log(mime);
+		console.log(mimesSupported);
 		if(mime in mimesSupported) {
+			console.log(audElem);
 			audElem.pause();
 			audElem.src = src;
+			audElem.load();
 			audElem.play();
 		}
 		else {
-			audAudio.append([error(["Your browser does not support the audio type", mime].join('')))
+			audAudio.append([error(["Your browser does not support the audio type", mime].join(''))]);
 		}
 	});
 }
+
+
+function audNewSeeker(repl) {
+	if(repl) {
+		$("#audSeekCont").html('<div class="audCont" id="audSeek"></div>');
+	}
+	audSeek.slider({value: 0.5, max: Math.floor(audElem.duration), animate:'fast',
+		start: function(event, ui) {
+			if(audElem.buffered.length) {
+				if(ui.value > audElem.buffered.end(0)) { // Prevent slide past buffer
+					return false;
+				}
+			}
+			// Set lastValue to where we currently are
+			lastValue = ui.value;
+		},
+		slide: function(event, ui) {
+			if(audElem.buffered.length) {
+				if(ui.value > audElem.buffered.end(0)) { // Prevent slide past buffer
+					return false;
+				}
+			}
+			// WhereWeAreNow - WhereWeWereLastMove = HowMuchWeMoved
+			var seekJump = ui.value - lastValue;
+			// Seek to WhereWeAreNow +- HowMuchWeMoved
+			updateTime(ui.value + seekJump, true);
+			lastValue = ui.value;
+		},
+		stop: function(event, ui) {
+			if(audElem.buffered.length) {
+				if(ui.value > audElem.buffered.end(0)) { // Prevent slide past buffer
+					return false;
+				}
+			}
+			updateTime(ui.value, true);
+			lastValue = ui.value;
+			
+		}
+	});
+	audSeek.append('<span class="audCont" id="audBuffer"></span>');
+	audBuffer = $('#audBuffer');
+}
+
 
 // Bind some JQuery + HTML5 event functions
 function audBindEvents() {
@@ -222,7 +259,7 @@ function audBindEvents() {
 	//Music Uploads
 	$("#audMusicUpload").dialog({autoOpen: false, show: 'drop', hide: 'drop', height: $(window).height() - 200, width: 550, draggable: false, resizable: false, modal: true, buttons: {
 			"Upload": function() {
-				$("#audMusicUploadForm")
+				$("#audMusicUploadForm");
 			},
 			"Cancel": function() {
 				$(this).dialog("close");
@@ -237,7 +274,7 @@ function audBindEvents() {
 		icons: {
 			primary: "ui-icon-volume-on"
 		}
-	})
+	});
 
 	$("#audUpload").button().click(function(){
 		$("#audMusicUpload").dialog('open');
@@ -251,7 +288,7 @@ function audBindEvents() {
 		}
 		audElem.seeking = true;
 		updateTime($("#audSeek").slider('value'));
-	})
+	});
 
 	$(document).mouseup(function(){
 		audElem.seeking = false;
@@ -259,7 +296,7 @@ function audBindEvents() {
 			seekPaused = false;
 			audPlPa.trigger('click');
 		}
-	})
+	});
 
 	// Save statistics before user leaves the page
 	window.onbeforeunload = saveStats();
@@ -289,9 +326,9 @@ function audBindEvents() {
 
 	
 	$(audElem).bind("loadstart", function(){ // When the media starts loading
-		if(audElem.buffered != undefined) { // If browser supports .buffered
+		if(audElem.buffered !== undefined) { // If browser supports .buffered
 			$(audElem).bind("progress", function(){ // Every time we add to the buffer
-				if(audElem.buffered.length != 0) {
+				if(audElem.buffered.length !== 0) {
 					audBuffer.animate({'width': [(audElem.buffered.end(0)/audElem.duration)*100, '%'].join('')});
 				}
 				else { // length == 0 if fully cached
@@ -300,54 +337,35 @@ function audBindEvents() {
 			});
 		}
 	});
-}
 
-function audNewSeeker(repl) {
-	if(repl) {
-		$("#audSeekCont").html('<div class="audCont" id="audSeek"></div>');
-	}
-	audSeek.slider({value: 0.5, max: Math.floor(audElem.duration), animate:'fast',
-		start: function(event, ui) {
-			if(audElem.buffered.length) {
-				if(ui.value > audElem.buffered.end(0)) { // Prevent slide past buffer
-					return false;
-				}
-			}
-			// Set lastValue to where we currently are
-			lastValue = ui.value;
-		},
-		slide: function(event, ui) {
-			if(audElem.buffered.length) {
-				if(ui.value > audElem.buffered.end(0)) { // Prevent slide past buffer
-					return false;
-				}
-			}
-			// WhereWeAreNow - WhereWeWereLastMove = HowMuchWeMoved
-			var seekJump = ui.value - lastValue;
-			// Seek to WhereWeAreNow +- HowMuchWeMoved
-			updateTime(ui.value + seekJump, true);
-			lastValue = ui.value;
-		},
-		stop: function(event, ui) {
-			if(audElem.buffered.length) {
-				if(ui.value > audElem.buffered.end(0)) { // Prevent slide past buffer
-					return false;
-				}
-			}
-			updateTime(ui.value, true);
-			lastValue = ui.value;
-			
-		}
+	$('.songRow').live('dblclick',function(event){
+		var toplayid = parseInt($(this).attr('id').substring(7),10);
+		changeSong(libraryJson[toplayid-1].url);
 	});
-	audSeek.append('<span class="audCont" id="audBuffer"></span>');
-	audBuffer = $('#audBuffer');
 }
 
-$(document).ready(function(){
+////Startup
+//
+// Set up some elements + variables
+function audSetup() {
+	audAudio = $('#audAudio');
+	audAudio.html('<audio id="aud2Audio" src="http://theanti9.com/Angelica.mp3" autobuffer></audio>');
+	audElem = document.getElementById('aud2Audio');
+	audTimePassed = $('#audTimePassed');
+	audTimeLeft = $('#audTimeLeft');
+	audPlayer = $('#audPlayer');
+	audPlPa = $("#audPlPa");
+	audSeek = $('#audSeek');
+	audBuffer = $("#audBuffer");
+	audBindEvents();
+	makeInitRequests();
+}
+
+(function(){
 	if($.browser.msie) {
 		alert("IE Not Supported");
 	}
 	else {
 		audSetup();
 	}
-});
+})();

@@ -7,7 +7,7 @@ if (!isset($_POST['username']) || !isset($_POST['password']) || !isset($_POST['c
 }
 
 if ($_POST['password'] != $_POST['confirm']) {
-	echo json_encode(array("error"=>"Passwords do not match!");
+	echo json_encode(array("error"=>"Passwords do not match!"));
 	exit();
 }
 
@@ -21,7 +21,7 @@ if (!$pdo) {
 	exit();
 }
 
-$user = new User(&$pdo, $_POST['username']);
+$user = new User(&$pdo, $_POST['username'], $SETTINGS);
 if (!$user->SetPassword($_POST['password'])) {
 	echo json_encode(array("error"=>"Failed to update user object!"));
 	exit();

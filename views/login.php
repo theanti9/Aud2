@@ -13,7 +13,7 @@ if (!$pdo) {
 	echo json_encode(array("error"=>"Invalid database object"));
 }
 try {
-	$user = new User(&$pdo, $_POST['username']);
+	$user = new User(&$pdo, $_POST['username'], $SETTINGS);
 	if ($user->ValidatePassword($_POST['password'])) {
 		$_SESSION['userid'] = $user->getID();
 		$_SESSION['username'] = $user->username;

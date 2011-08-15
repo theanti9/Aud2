@@ -18,7 +18,7 @@ if (!$pdo) {
 	echo json_encode(array("error"=>"Invalid database object"));
 }
 try {
-	$user = new User(&$pdo, $_SESSION['username']);
+	$user = new User(&$pdo, $_SESSION['username'], $SETTINGS);
 
 	$library = $user->GetLibraryJson();
 	if (gettype($library) == "object") {

@@ -80,8 +80,7 @@ session_start();
 				</table>
 			</div>
 		</div>
-	</body>
-	<footer>
+		<footer>
 		<script src="js/jquery-1.6.2.min.js"></script>
 		<script src="js/jquery-ui-1.8.15.custom.min.js"></script>
 		<script src="js/jquery.tmpl.min.js"></script>
@@ -153,4 +152,5 @@ session_start();
 		<script src="js/application.js"></script>
 		<script src="js/AudPreloader.js"></script>
 	</footer>
+	</body>
 </html>
