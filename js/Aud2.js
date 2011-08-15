@@ -67,8 +67,10 @@ function updateTime(time, seek) {
 	// time is time we're currently at/seeking to
 
 	//Prevent seeking past buffer length
-	if(time >= audElem.buffered.end(0)) {
-		time = Math.floor(audElem.buffered.end(0)) - 1;
+	if(audElem.buffered.length) {
+		if(time >= audElem.buffered.end(0)) {
+			time = Math.floor(audElem.buffered.end(0)) - 1;
+		}
 	}
 
 	var passed = withMinutes(Math.floor(time));
@@ -225,7 +227,7 @@ function audBindEvents() {
 			}
 		},
 		close: function() {
-			$('input:file').MultiFile('reset');
+			// Clear Form
 		}
 	});
 
@@ -315,15 +317,19 @@ function audNewSeeker(repl) {
 	}
 	audSeek.slider({value: 0.5, max: Math.floor(audElem.duration), animate:'fast',
 		start: function(event, ui) {
-			if(ui.value > audElem.buffered.end(0)) { // Prevent slide past buffer
-				return false;
+			if(audElem.buffered.length) {
+				if(ui.value > audElem.buffered.end(0)) { // Prevent slide past buffer
+					return false;
+				}
 			}
 			// Set lastValue to where we currently are
 			lastValue = ui.value;
 		},
 		slide: function(event, ui) {
-			if(ui.value > audElem.buffered.end(0)) { // Prevent slide past buffer
-				return false;
+			if(audElem.buffered.length) {
+				if(ui.value > audElem.buffered.end(0)) { // Prevent slide past buffer
+					return false;
+				}
 			}
 			// WhereWeAreNow - WhereWeWereLastMove = HowMuchWeMoved
 			var seekJump = ui.value - lastValue;
@@ -332,8 +338,10 @@ function audNewSeeker(repl) {
 			lastValue = ui.value;
 		},
 		stop: function(event, ui) {
-			if(ui.value > audElem.buffered.end(0)) { // Prevent slide past buffer
-				return false;
+			if(audElem.buffered.length) {
+				if(ui.value > audElem.buffered.end(0)) { // Prevent slide past buffer
+					return false;
+				}
 			}
 			updateTime(ui.value, true);
 			lastValue = ui.value;

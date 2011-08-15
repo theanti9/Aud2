@@ -20,6 +20,9 @@ $(function () {
 
     // Load existing files:
     $.getJSON($('#fileupload form').prop('action'), function (files) {
+        if(!files) {
+            return false;
+        }
         var fu = $('#fileupload').data('fileupload');
         fu._adjustMaxNumberOfFiles(-files.length);
         fu._renderDownload(files)

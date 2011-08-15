@@ -39,7 +39,7 @@ $error = false;
 $ret = $mu->ProcessSingles(&$pdo, $files, $user);
 header('Content-type: application/json');
 echo json_encode($ret);
-exit()
+exit();
 //} 
 /* else if ($_POST['upload_type'] == "zip") {
 	if (is_array($mu->ProcessZips(&$pdo, $files, $user))) {
