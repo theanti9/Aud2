@@ -50,7 +50,7 @@ class Song {
 				$tag = $getID3->analyze($this->songpath);
 				getid3_lib::CopyTagsToComments($tag);
 				$this->artist = $this->first($tag['comments_html']['artist']);
-				$this->title = ($this->first($tag['comments_html']['title'])) ? $this->first($tag['comments_html']['title']) : substr($this->songpath, strrpos($this->songpath,"/")+1);
+				$this->title = ($this->first($tag['comments_html']['title'])) ? $this->first($tag['comments_html']['title']) : rawurldecode(substr($this->songpath, strrpos($this->songpath,"/")+1));
 				$this->album = $this->first($tag['comments_html']['album']);
 				$this->track = "0";
 				$this->genre = $this->first($tag['comments_html']['genre']);

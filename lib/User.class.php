@@ -116,9 +116,9 @@ class User {
 			$ret = array();
 			foreach($all as $song) {
 				$ret[] = array( "songid"=>$song['songid'],
-								"title"=>$song['title'],
-								"artist"=>$song['artist'],
-								"album"=>$song['album'],
+								"title"=>stripslashes($song['title']),
+								"artist"=>stripslashes($song['artist']),
+								"album"=>stripslashes($song['album']),
 								"url"=>substr($song['songpath'],strlen($this->settings->BasePath)));
 			}
 			return json_encode($ret);
