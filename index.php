@@ -40,12 +40,17 @@ session_start();
 				<div id="audAudio">
 					<!-- HTML5 Audio Element -->
 				</div>
+				<div id="audVisual">
+					<img id="audArt" src="/img/artwork.png" width="150px" height="150px" />
+				</div>
 				<div id="audNowMeta">
 					<span id="audCurArtist" class="audCont">Artist</span> - <span id="audCurAlbum" class="audCont">Album</span> - <span id="audCurSong" class="audCont">Song</span>
 				</div>
 				<div id="audControls">
-					<button id="audPrev">&lt;</button> <button id="audPlPa">Play</button> <button id="audNext">&gt;</button>
-					<br /><span class="audCont audTime" id="audTimePassed">00:00</span> <div class="audCont" id="audSeekCont"><div id="audSeek"></div></div> <span class="audCont audTime">-<span class="audCont" id="audTimeLeft">00:00</span></span><div class="audCont" id="audVolCont"><button id="audVolButton"></button><div id="audVol"></div></div>
+					<input type="checkbox" id="audShuffle" /><label id="audShuffleCont" for="audShuffle"></label>
+					<input type="checkbox" id="audRepeat" /><label id="audRepeatLabel" for="audRepeat">&nbsp;&nbsp;1</label><button id="audPrev"></button> <button id="audPlPa"></button> <button id="audNext"></button><div class="audCont" id="audVolCont"><div class="audCont" id="audMuteCont"><button id="audMuteButton"></button></div><div id="audVol"></div></div>
+
+					<br /><span class="audCont audTime" id="audTimePassed">00:00</span> <div class="audCont" id="audSeekCont"><div id="audSeek"></div></div> <span class="audCont audTime">-<span class="audCont" id="audTimeLeft">00:00</span></span>
 				</div>
 			</div>
 			<button id="audUpload">Upload Music</button>
@@ -59,6 +64,7 @@ session_start();
 							</label>
 							<button type="submit" class="start">Start upload</button>
 							<button type="reset" class="cancel">Cancel upload</button>
+							<button type="clear" class="clear">Clear Finished</button>
 						</div>
 					</form>
 					<div class="fileupload-content">

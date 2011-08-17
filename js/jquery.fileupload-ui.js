@@ -453,7 +453,7 @@
             tmpl.css('display', 'none');
             tmpl.find('.delete button').button({
                 text: false,
-                icons: {primary: 'ui-icon-trash'}
+                icons: {primary: 'ui-icon-closethick'}
             });
             tmpl.find('a').each(this._enableDragToDesktop);
             return tmpl;
@@ -551,7 +551,7 @@
                     filesList.find('.cancel button').click();
                 });
             fileUploadButtonBar.find('.delete')
-                .button({icons: {primary: 'ui-icon-trash'}})
+                .button({icons: {primary: 'ui-icon-closethick'}})
                 .bind('click.' + ns, function (e) {
                     e.preventDefault();
                     filesList.find('.delete button').click();

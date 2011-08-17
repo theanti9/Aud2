@@ -10,10 +10,6 @@ a {
   color: #222;
 }
 
-#audPlayer {
-	opacity: 0.0;
-}
-
 #audSeek{
 	padding: 0px;
 	margin: 0px;
@@ -44,16 +40,58 @@ a {
 	background-repeat: repeat-x;
 }
 
-#audVolButton {
-	margin-left: -15px;
-	width: 0px;
-	height: 0px;
-	margin-bottom: 5px;
+#audVisual {
+	text-align: center;
 }
 
-#audVolButton > .ui-button-icon-primary {
-	padding: 0px;
-	margin-left: -10px;
+#audRepeatLabel {
+	vertical-align: top;
+	margin-top: 2px;
+}
+
+#audRepeatLabel > .ui-button-text {
+	visibility: hidden;
+	font-size: 5pt !important;
+	color: #000000;
+}
+
+#audShuffleCont {
+	margin-left: -170px;
+}
+
+#audRepeatLabel {
+	margin-right: 110px;
+}
+
+#audVolCont {
+	position: absolute;
+	margin-left: 60px;
+}
+
+#audMuteButton {
+	margin-right: 8px;
+}
+
+#audVol {
+	width: 120px;
+	display: inline-block;
+	margin-top: -13px;
+	margin-bottom: 2px;
+}
+
+
+
+.ui-button-icon-only {
+	height: 15px;
+}
+
+.ui-icon-pause {
+	margin-left: -px !important;
+}
+
+#audMuteButton {
+	width: 15px;
+	margin-left: -1px;
 }
 
 .audPage {
