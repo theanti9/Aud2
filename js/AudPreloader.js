@@ -7,6 +7,9 @@ $(document).ready(function(){
 	if($.browser.msie) {
 		alert("IE Not Supported");
 	}
+	else if (AudSession) {
+		$.getScript("js/Aud2.js");
+	}
 	else {
 
 		$("#audRegButton").button().click(function(event){
