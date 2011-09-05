@@ -157,6 +157,9 @@ session_start();
 				</td>
 			</tr>
 		</script>
+		<script>
+			<?php echo (isset($_SESSION['userid']) && isset($_SESSION['username'])) ? "AudSession = true;" : "AudSession = false;"; ?>
+		</script>
 		<script src="js/jquery.form.js"></script>
 		<script src="js/jquery.fileupload.js"></script>
 		<script src="js/jquery.fileupload-ui.js"></script>
