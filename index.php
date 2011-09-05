@@ -1,4 +1,10 @@
 <?php 
+header( 'Expires: Sat, 26 Jul 1997 05:00:00 GMT' ); 
+header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' ); 
+header( 'Cache-Control: no-store, no-cache, must-revalidate' ); 
+header( 'Cache-Control: post-check=0, pre-check=0', false ); 
+header( 'Pragma: no-cache' ); 
+	
 session_start();
 ?>
 <!DOCTYPE html>
@@ -75,10 +81,10 @@ session_start();
 			</div>
 			<div id="audLibrary">
 				<h3>Aud Library</h3>
-				<table>
+				<table id="audLibTable">
 					<thead id="audLibHead">
 						<tr>
-							<th>#</th><th>Title</th><th>Artist</th><th>Album</th>
+							<th>ID</th><th>&#10003;</th><th>#</th><th>Title</th><th>Time</th><th>Artist</th><th>Album</th><th>Genre</th><th>Plays</th>
 						</tr>
 					</thead>
 					<tbody id="audLibBody">
@@ -156,6 +162,9 @@ session_start();
 		<script src="js/jquery.fileupload-ui.js"></script>
 		<script src="js/jquery.iframe-transport.js"></script>
 		<script src="js/application.js"></script>
+		<script src="js/jquery.dataTables.min.js"></script>
+		<script src="js/jquery.jeditable.mini.js"></script>
+		<script src="js/tplclick.js"></script>
 		<script src="js/AudPreloader.js"></script>
 	</footer>
 	</body>

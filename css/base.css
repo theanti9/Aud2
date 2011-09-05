@@ -109,3 +109,26 @@ a {
 .ui-slider-handle {
 	outline: 0px;
 }
+
+tr, td {
+	cursor: move;
+}
+
+.even {
+	background-color: #DEDFE1;
+}
+
+.odd {
+	background-color: #EFF0F2;
+}
+
+#audLibrary {
+	width: 70%;
+	margin-left: 15%;
+}
+
+#audLibTable {
+	width: 100%;
+	border: 0px;
+	border-spacing: 0px;
+}

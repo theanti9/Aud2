@@ -28,8 +28,6 @@ $(document).ready(function(){
 		// Registration Form
 		$("#audRegister").ajaxForm({dataType: 'json',
 			beforeSubmit: function() {
-				// console.log($("#regPass").val());
-				// console.log($("#regConf").val());
 				if($("#regPass").val() != $("#regConf").val()) {
 					$("#audRegister").prepend(error("Passwords do not match"));
 					return false;

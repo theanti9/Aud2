@@ -22,6 +22,9 @@ var seekPaused = null;
 var audioSupported = false;
 var mimesSupported = [];
 var mimesUnsupported = [];
+var selecting = false;
+var selStart = 0;
+var selEnd = 0;
 //// Useful audElem properties:
 // duration
 // currentTime
@@ -111,7 +114,6 @@ function saveStats(callback) {
 
 // Checks if audio element - and possible mimetypes - are supported by the browser
 function audSupportCheck() {
-	console.log("wee");
 	if (!!document.createElement('audio').canPlayType) {
 		audioSupported = true;
 		mimesSupported = [];
@@ -132,7 +134,6 @@ function audSupportCheck() {
 }
 
 function audInit() {
-	console.log("here");
 	$("#audPageLoading").fadeOut("fast", function() {
 		$("#audPageLoaded").fadeIn('fast', function() {
 		});
@@ -151,11 +152,105 @@ function makeInitRequests() {
 		var tbl = [];
 		// Generate the library table
 		$(data).each(function(i, v) {
-			tbl.push(["<tr class='songRow' id='songid_", v.songid, "'><td>", i, "</td><td>", v.title, "</td><td>", v.artist, "</td><td>", v.album, "</td></tr>"].join(''));
+			tbl.push([v.songid, ["<input type=\"checkbox\" id=\"row_checkbox_", i, "\" />"].join(''), i, v.title, "00:00", v.artist, v.album, "Rock", "0"]);
 		});
 
 		// Output
-		$('#audLibBody').html(tbl.join(''));
+		var audTable = $("#audLibTable").dataTable({
+			"aaData": tbl,
+			"bPaginate": false,
+			"bAutoWidth": false,
+			"aaColumns": [
+				{"sTitle": "ID"}, // Hidden
+				{"sTitle": ""},
+				{"sTitle": "#"},
+				{"sTitle": "Title"},
+				{"sTitle": "Time"},
+				{"sTitle": "Artist"},
+				{"sTitle": "Album"},
+				{"sTitle": "Plays"}
+			],
+			"aoColumnDefs": [
+				{"sClass": "center", "aTargets": [1, 2, -1]},
+				{"bVisible": false, "aTargets": [0]},
+				{"bSortable": false, "aTargets": [0, 1]}
+				],
+			"oLanguage": {
+				"sEmptyTable": "No songs added",
+				"sInfo": "_TOTAL_ songs",
+				"sInfoEmpty": "0 songs", 
+				"sInfoFiltered": "(filtered from _MAX_ total songs)"
+			},
+			"bJQueryUI": true,
+			"fnRowCallback": function(nRow, aData, iDisplayIndex) {
+				$(nRow).find("td:eq(2)").addClass("id3");
+				$(nRow).find("td:eq(4)").addClass("id3");
+				$(nRow).find("td:eq(5)").addClass("id3");
+				$(nRow).find("td:eq(6)").addClass("id3");
+				return nRow;
+			}
+		});
+
+		//Make id3-corresponding rows editable
+		$('.id3', audTable.fnGetNodes()).editable('/path/to/edit.php', {
+			"callback": function(sValue, y) {
+				var aPos = audTable.fnGetPosition(this);
+				audTable.fnUpdate(sValue, aPos[0], aPos[1]);
+			},
+			"submitdata": function (value, settings) {
+				return {
+					"row_id": this.parentNode.getAttribute('id'),
+					"column": audTable.fnGetPosition(this)[2]
+				};
+			},
+			"event":"tplclick",
+			"onblur": "submit",
+			"height": "12px",
+			"width": "300px"
+		});
+
+		//Multiple row select
+		$('#audLibTable tr').click(function() {
+			if ($(this).hasClass('row_selected')) {
+				$(this).removeClass('row_selected');
+			}
+			else {
+				$(this).addClass('row_selected');
+			}
+		});
+
+		 //Draggable Rows
+		var table = $('#audLibTable');
+		table.find('tr').bind('mousedown', function() {
+		    table.disableSelection();
+		}).bind('mouseup', function() {
+		    table.enableSelection();
+		}).draggable({
+		    helper: function(event) {
+				return $('<div class="drag-song-row"><table></table></div>').find('table').append($(event.target).closest('tr').clone()).end().insertAfter(table);
+			},
+			cursorAt: {
+				left: -5,
+				bottom: 5
+			},
+			cursor: 'move',
+			distance: 10,
+			delay: 100,
+			scope: 'song-row',
+			revert: 'invalid'
+		});
+
+		$('.audPlLink').droppable({
+			scope: 'song-row',
+			activeClass: 'active',
+			hoverClass: 'hover',
+			tolerance: 'pointer',
+			drop: function(event, ui) {
+				var classid = ui.helper.find('tr').attr('id');
+				var name = ui.helper.find('.name').html();
+				$('#cart .selected').append('<li id="' + classid + '">' + name + '</li>');
+			}
+		});
 	}, 'json');
 }
 
@@ -396,7 +491,6 @@ function audBindEvents() {
 	//// HTML5 audio events
 	//
 	$(audElem).bind("timeupdate", function() {
-		console.log("timeupdate");
 		if (!audElem.seeking && !audElem.paused) {
 			updateTime();
 			$("#audSeek").slider("value", Math.floor(audElem.currentTime));
@@ -405,7 +499,6 @@ function audBindEvents() {
 	});
 
 	$(audElem).bind("loadedmetadata", function() {
-		console.log("loadedmetadata");
 		updateTime();
 		audSupportCheck();
 		audNewSeeker();
@@ -418,9 +511,7 @@ function audBindEvents() {
 		}
 	});
 
-
 	$(audElem).bind("loadstart", function() { // When the media starts loading
-		console.log("loadstart");
 		if (audElem.buffered !== undefined) { // If browser supports .buffered
 			$(audElem).bind("progress", function() { // Every time we add to the buffer
 				if (audElem.buffered.length !== 0) {
