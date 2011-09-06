@@ -20,6 +20,7 @@ Javascript/Jquery Libraries:
 * [JEditable JQuery plugin](http://www.appelsiini.net/projects/jeditable) (Included)
 * [JQuery Multiple File Upload Widget](https://github.com/blueimp/jQuery-File-Upload) (Included, modified)
 * [JQuery Ajax Form plugin](http://www.malsup.com/jquery/form/) (Included)
+* [JQuery Triple Click Plugin](http://benalman.com/news/2010/03/jquery-special-events/#setup-and-teardown-tripleclick-per-element) (Included)
 
 Feature List
 ============

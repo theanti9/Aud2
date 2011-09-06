@@ -122,6 +122,14 @@ tr, td {
 	background-color: #EFF0F2;
 }
 
+.even.row_selected td {
+    background-color: #8FBCF0;
+}
+
+.odd.row_selected td {
+    background-color: #97C5F8;
+}
+
 #audLibrary {
 	width: 70%;
 	margin-left: 15%;

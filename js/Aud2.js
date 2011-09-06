@@ -205,6 +205,7 @@ function makeInitRequests() {
 			},
 			"event":"tplclick",
 			"onblur": "submit",
+			"placeholder": "---",
 			"height": "12px",
 			"width": "300px"
 		});
@@ -215,6 +216,7 @@ function makeInitRequests() {
 				$(this).removeClass('row_selected');
 			}
 			else {
+				$(this).find("td input").trigger("click");
 				$(this).addClass('row_selected');
 			}
 		});
@@ -248,7 +250,7 @@ function makeInitRequests() {
 			drop: function(event, ui) {
 				var classid = ui.helper.find('tr').attr('id');
 				var name = ui.helper.find('.name').html();
-				$('#cart .selected').append('<li id="' + classid + '">' + name + '</li>');
+				$('#playlist .selected').append('<li id="' + classid + '">' + name + '</li>');
 			}
 		});
 	}, 'json');
