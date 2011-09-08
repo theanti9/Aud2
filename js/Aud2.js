@@ -135,6 +135,21 @@ function audSupportCheck() {
 	}
 }
 
+function changeSong(src) {
+	saveStats(function() {
+		var mime = getMime(src);
+		if (mimesSupported.indexOf(mime) != -1) {
+			audPlPa.trigger("click");
+			audElem.src = src;
+			//audElem.load();
+			audPlPa.trigger("click");
+		}
+		else {
+			audAudio.append(error(["Your browser does not support the audio type '", mime, "'"].join('')));
+		}
+	});
+}
+
 function audInit() {
 	$("#audPageLoading").fadeOut("fast", function() {
 		$("#audPageLoaded").fadeIn('fast', function() {
@@ -268,20 +283,6 @@ function makeInitRequests() {
 
 //// Other
 //
-function changeSong(src) {
-	saveStats(function() {
-		var mime = getMime(src);
-		if (mimesSupported.indexOf(mime) != -1) {
-			audPlPa.trigger("click");
-			audElem.src = src;
-			//audElem.load();
-			audPlPa.trigger("click");
-		}
-		else {
-			audAudio.append(error(["Your browser does not support the audio type '", mime, "'"].join('')));
-		}
-	});
-}
 
 
 function audNewSeeker(repl) {
@@ -425,7 +426,7 @@ function audBindEvents() {
 		var nextId = null;
 		do {
 			if (curPlayList[i].songid.toString() == curSongId.toString()) {
-				if (i == 0) {
+				if (i === 0) {
 					nextId = curPlayList[curPlayList.length-1].songid.toString();
 					break;
 				}
@@ -433,7 +434,7 @@ function audBindEvents() {
 				break;
 			}
 		} while (i < curPlayList.length-1);
-		if (nextId == null) {
+		if (nextId === null) {
 			alert("Fuck");
 			return;
 		}
@@ -458,7 +459,7 @@ function audBindEvents() {
 				break;
 			}
 		} while (i < curPlayList.length-2);
-		if (nextId == null) {
+		if (nextId === null) {
 			alert("Fuck");
 			return;
 		}
@@ -485,7 +486,7 @@ function audBindEvents() {
 		},
 		text: true
 	}).click(function(event) {
-		if (repeat == 0) {
+		if (repeat === 0) {
 			repeat = 1;
 		}
 		else if (repeat == 1) {
@@ -572,7 +573,7 @@ function audBindEvents() {
 
 	$(audElem).bind("ended", function(){
 		audPlPa.trigger("click");
-	})
+	});
 }
 
 ////Startup
