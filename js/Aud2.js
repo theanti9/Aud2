@@ -182,6 +182,7 @@ function makeInitRequests() {
 				"sInfoFiltered": "(filtered from _MAX_ total songs)"
 			},
 			"bJQueryUI": true,
+			"sDom": '<"toolbar">frtip',
 			"fnRowCallback": function(nRow, aData, iDisplayIndex) {
 				$(nRow).find("td:eq(2)").addClass("id3");
 				$(nRow).find("td:eq(4)").addClass("id3");
@@ -190,6 +191,9 @@ function makeInitRequests() {
 				return nRow;
 			}
 		});
+
+		//Add some toolbar text
+		$("div.toolbar").html('Music Library');
 
 		//Make id3-corresponding rows editable
 		$('.id3', audTable.fnGetNodes()).editable('/path/to/edit.php', {
@@ -216,7 +220,7 @@ function makeInitRequests() {
 				$(this).removeClass('row_selected');
 			}
 			else {
-				$(this).find("td input").trigger("click");
+				//$(this).find("td input").trigger("click");
 				$(this).addClass('row_selected');
 			}
 		});

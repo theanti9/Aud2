@@ -79,8 +79,6 @@ a {
 	margin-bottom: 2px;
 }
 
-
-
 .ui-button-icon-only {
 	height: 15px;
 }
@@ -139,4 +137,44 @@ tr, td {
 	width: 100%;
 	border: 0px;
 	border-spacing: 0px;
+}
+
+#audLibTable tbody tr.even:hover, #audLibTable tbody tr.even td.highlighted {
+	background-color: #BFCCE7;
+}
+
+#audLibTable tbody tr.odd:hover, #audLibTable tbody tr.odd td.highlighted {
+	background-color: #D0DEF9;
+}
+
+#audLibTable tr.even:hover {
+	background-color: #BFCCE7;
+}
+
+#audLibTable tr.even td.sorting_1 {
+	background-color: #D7E4FF;
+}
+
+#audLibTable tr.even td.sorting_2 {
+	background-color: #D7E4FF;
+}
+
+#audLibTable tr.even td.sorting_3 {
+	background-color: #D7E4FF;
+}
+
+#audLibTable tr.odd:hover {
+	background-color: #D0DEF9;
+}
+
+#audLibTable tr.odd td.sorting_1 {
+	background-color: #E7EFFF;
+}
+
+#audLibTable tr.odd td.sorting_2 {
+	background-color: #E7EFFF;
+}
+
+#audLibTable tr.odd td.sorting_3 {
+	background-color: #E7EFFF;
 }
