@@ -17,7 +17,7 @@ try {
 	if ($user->ValidatePassword($_POST['password'])) {
 		$_SESSION['userid'] = $user->getID();
 		$_SESSION['username'] = $user->username;
-		echo json_encode(array("error"=>NULL));
+		echo json_encode(array("error"=>NULL, "username"=>$user->username, "userid"=>$user->userid));
 		exit();
 	} else {
 		echo json_encode(array("error"=>"bad password"));

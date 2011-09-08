@@ -115,7 +115,7 @@ class User {
 			$all = $sth->fetchAll();
 			$ret = array();
 			foreach($all as $song) {
-				$ret[] = array( "songid"=>$song['songid'],
+				$ret[(string)$song['songid']] = array( "songid"=>$song['songid'],
 								"title"=>stripslashes($song['title']),
 								"artist"=>stripslashes($song['artist']),
 								"album"=>stripslashes($song['album']),

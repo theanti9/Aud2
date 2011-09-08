@@ -35,9 +35,11 @@ var selEnd = 0;
 // buffered
 // paused
 // Aud2 Library Vars
-var curSongIndex = 0;
-var userid = null;
-var username = null;
+var curSongId = 0;
+
+//// Moved to index.php
+// var userid = null;
+//var username = null;
 var libraryJson = null; // Whole library as one.
 var curPlaylist = null; // Keep what is currently playing. Subset of libraryJson
 
@@ -142,7 +144,6 @@ function audInit() {
 
 function makeInitRequests() {
 	// Grab the library
-	username = "wite"; // for testing only
 	$.post('views/library.php', {
 		action: 'getLibrary',
 		username: username
@@ -154,6 +155,7 @@ function makeInitRequests() {
 		$(data).each(function(i, v) {
 			tbl.push([v.songid, ["<input type=\"checkbox\" id=\"row_checkbox_", i, "\" />"].join(''), i, v.title, "00:00", v.artist, v.album, "Rock", "0"]);
 		});
+
 
 		// Output
 		var audTable = $("#audLibTable").dataTable({
@@ -208,6 +210,14 @@ function makeInitRequests() {
 			"placeholder": "---",
 			"height": "12px",
 			"width": "300px"
+		});
+
+
+		$("#audLibTable tr").live('dblclick',function() {
+			var toplayid = audTable.fnGetData(this,0);
+			curSongId = toplayid;
+			changeSong(libraryJson[toplayid.toString()].url);
+
 		});
 
 		//Multiple row select
@@ -411,8 +421,23 @@ function audBindEvents() {
 		},
 		text: false
 	}).click(function() {
-		curSongIndex--;
-		changeSong(curPlayList[curSongIndex].songpath);
+		var i = 0;
+		var nextId = null;
+		do {
+			if (curPlayList[i].songid.toString() == curSongId.toString()) {
+				if (i == 0) {
+					nextId = curPlayList[curPlayList.length-1].songid.toString();
+					break;
+				}
+				nextId = curPlayList[i-1].songid.toString();
+				break;
+			}
+		} while (i < curPlayList.length-1);
+		if (nextId == null) {
+			alert("Fuck");
+			return;
+		}
+		changeSong(curPlayList[nextid].songpath);
 	});
 
 	$("#audNext").button({
@@ -421,8 +446,23 @@ function audBindEvents() {
 		},
 		text: false
 	}).click(function() {
-		curSongIndex++;
-		changeSong(curPlayList[curSongIndex].songpath);
+		var i = 0;
+		var nextId = null;
+		do {
+			if (curPlayList[i].songid.toString() == curSongId.toString()) {
+				if (i == curPlayList.length-1) {
+					nextId = curPlayList[0].songid.toString();
+					break;
+				}
+				nextId = curPlayList[i+1].songid.toString();
+				break;
+			}
+		} while (i < curPlayList.length-2);
+		if (nextId == null) {
+			alert("Fuck");
+			return;
+		}
+		changeSong(curPlayList[nextid].songpath);
 	});
 
 	$("#audShuffle").button({
@@ -533,12 +573,6 @@ function audBindEvents() {
 	$(audElem).bind("ended", function(){
 		audPlPa.trigger("click");
 	})
-
-	$('.songRow').live('dblclick', function(event) {
-		//var toplayid = parseInt($(this).attr('id').substring(7),10);
-		var toplayid = parseInt($(this).children('td').first().text(), 10) + 1;
-		changeSong(libraryJson[toplayid - 1].url);
-	});
 }
 
 ////Startup

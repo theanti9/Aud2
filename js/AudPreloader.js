@@ -8,7 +8,9 @@ $(document).ready(function(){
 		alert("IE Not Supported");
 	}
 	else if (AudSession) {
-		$.getScript("js/Aud2.js");
+		$.getScript("js/Aud2.js", function(){
+			audSetup();
+		});
 	}
 	else {
 
@@ -70,6 +72,10 @@ $(document).ready(function(){
 					$("#audPageLogin").fadeOut('fast');
 					$("#audPageLoading").fadeIn('fast');
 					$.getScript("js/Aud2.js");
+					username = response.username;
+					userid = response.userid;
+					//$("#audPageLogin").fadeOut("slow");
+					audSetup();
 				}
 			}
 		});
