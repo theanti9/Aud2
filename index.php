@@ -84,7 +84,7 @@ session_start();
 				<table id="audLibTable">
 					<thead id="audLibHead">
 						<tr>
-							<th>ID</th><th>&#10003;</th><th>#</th><th>Title</th><th>Time</th><th>Artist</th><th>Album</th><th>Genre</th><th>Plays</th>
+							<th>ID</th><th>&nbsp;</th><th>&#10003;</th><th>#</th><th>Title</th><th>Time</th><th>Artist</th><th>Album</th><th>Genre</th><th>Plays</th>
 						</tr>
 					</thead>
 					<tbody id="audLibBody">

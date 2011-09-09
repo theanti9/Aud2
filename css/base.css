@@ -137,6 +137,7 @@ tr, td {
 	width: 100%;
 	border: 0px;
 	border-spacing: 0px;
+	table-layout: fixed;
 }
 
 #audLibTable tbody tr.even:hover, #audLibTable tbody tr.even td.highlighted {
@@ -177,4 +178,69 @@ tr, td {
 
 #audLibTable tr.odd td.sorting_3 {
 	background-color: #E7EFFF;
+}
+
+.center {
+	text-align: center;
+}
+
+.tbl_plays {
+	width: 50px;
+}
+
+.tbl_single_char {
+	width: 15px;
+}
+
+.tbl_title {
+	width: 275px;
+}
+
+td {
+	padding-left: 10px;
+	padding-right: 10px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.tbl_playing {
+	text-align: center;
+	width: 15px;
+}
+
+.tbl_check {
+	text-align: center;
+	width: 15px;
+}
+
+.tbl_index {
+	text-align: center;
+	width: 15px;
+}
+
+.tbl_title {
+	width: 220px;
+}
+
+.tbl_time {
+	text-align: center;
+	width: 40px;
+}
+
+.tbl_artist {
+	width: 175px;
+}
+
+.tbl_album {
+	width: 175px;
+}
+
+.tbl_genre {
+	width: 70px;
+}
+
+.tbl_plays {
+	text-align: center;
+	width: 35px;
 }

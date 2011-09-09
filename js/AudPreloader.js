@@ -72,7 +72,6 @@ $(document).ready(function(){
 					$("#audPageRegister").fadeOut('fast', function(){
 						$("#audPageLoading").fadeIn('fast', function(){
 							$.getScript("js/Aud2.js");
-							audSetup();
 						});
 					});
 				}

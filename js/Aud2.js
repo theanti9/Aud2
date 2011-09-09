@@ -175,7 +175,7 @@ function makeInitRequests() {
 		var i = 0;
 		for(var v in data) {
 			v = data[v];
-			tbl.push([v.songid, ["<input type=\"checkbox\" id=\"row_checkbox_", i, "\" />"].join(''), i, v.title, "00:00", v.artist, v.album, "Rock", "0"]);
+			tbl.push([v.songid, '<span class="playing ui-icon ui-icon-volume-on"></span>', ["<input type=\"checkbox\" id=\"row_checkbox_", i, "\" />"].join(''), i, v.title, "00:00", v.artist, v.album, "Rock", "0"]);
 			i++;
 		}
 
@@ -189,8 +189,9 @@ function makeInitRequests() {
 				"bAutoWidth": false,
 				"aaColumns": [
 					{"sTitle": "ID"}, // Hidden
-					{"sTitle": ""},
-					{"sTitle": "#"},
+					{"sTitle": "Playing"},
+					{"sTitle": "Check"},
+					{"sTitle": "Index"},
 					{"sTitle": "Title"},
 					{"sTitle": "Time"},
 					{"sTitle": "Artist"},
@@ -199,9 +200,24 @@ function makeInitRequests() {
 					{"sTitle": "Plays"}
 				],
 				"aoColumnDefs": [
-					{"sClass": "center", "aTargets": [0, 1, 2, 3, 4, 5]},
+					{"sClass": "tbl_playing", "aTargets": [1]},
+					{"sClass": "tbl_check", "aTargets": [2]},
+					{"sClass": "tbl_index", "aTargets": [3]},
+					{"sClass": "tbl_title", "aTargets": [4]},
+					{"sClass": "tbl_time", "aTargets": [5]},
+					{"sClass": "tbl_artist", "aTargets": [6]},
+					{"sClass": "tbl_album", "aTargets": [7]},
+					{"sClass": "tbl_genre", "aTargets": [8]},
+					{"sClass": "tbl_plays", "aTargets": [9]},
 					{"bVisible": false, "aTargets": [0]},
-					{"bSortable": false, "aTargets": [0, 1]}
+					{"bSortable": false, "aTargets": [0, 1, 2, 3]},
+					// {
+					// 	"fnRender": function(oObj) {
+					// 		console.log(oObj);
+					// 		return oObj.aData[oObj.iDataColumn];
+					// 	},
+					// 	"aTargets": [1, 2, 4, 8]
+					// }
 					],
 				"oLanguage": {
 					"sEmptyTable": "No songs added",
@@ -212,13 +228,25 @@ function makeInitRequests() {
 				"bJQueryUI": true,
 				"sDom": '<"toolbar">frtip',
 				"fnRowCallback": function(nRow, aData, iDisplayIndex) {
-					$(nRow).find("td:eq(2)").addClass("id3"); //Title
-					$(nRow).find("td:eq(4)").addClass("id3"); //Atrist
-					$(nRow).find("td:eq(5)").addClass("id3"); //Album
-					$(nRow).find("td:eq(6)").addClass("id3"); //Genre
+					$(nRow).find("td:eq(4)").addClass("id3"); //Title
+					$(nRow).find("td:eq(6)").addClass("id3"); //Atrist
+					$(nRow).find("td:eq(7)").addClass("id3"); //Album
+					$(nRow).find("td:eq(8)").addClass("id3"); //Genre
 					return nRow;
-				}
+				},
+				"fnDrawCallback": function (oSettings) {
+					if (oSettings.bSorted || oSettings.bFiltered)
+					{
+						for (var i=0, iLen=oSettings.aiDisplay.length;i<iLen;i++)
+						{
+							$('td:eq(2)', oSettings.aoData[oSettings.aiDisplay[i]].nTr).html(i+1);
+						}
+					}
+				},
 			});
+
+			//Hide playing icons
+			$(".playing").hide();
 
 			//Add some toolbar text
 			$("div.toolbar").html('Music Library');
@@ -254,10 +282,11 @@ function makeInitRequests() {
 			})
 
 			$("#audLibTable tbody tr").live('dblclick',function() {
+				$(".playing").fadeOut("fast");
 				var toplayid = audTable.fnGetData(this, 0);
 				curSongId = toplayid;
 				changeSong(libraryJson[toplayid.toString()].url);
-
+				$(this).children().first().find(".playing").fadeIn("fast");
 			});
 
 			//Multiple row select
@@ -276,6 +305,9 @@ function makeInitRequests() {
 			$("#audLibTable").mouseleave(function() {
 				if(!mousePressed) {
 					$(".row_selected").trigger("click");
+				}
+				if(!audElem.playing && audElem.ended) {
+					$(".playing").fadeOut("fast");
 				}
 			})
 
@@ -515,12 +547,14 @@ function audBindEvents() {
 				primary: "ui-icon-pause"
 			});
 			audElem.play();
+			$(".playing:visible").removeClass("ui-icon-volume-off").addClass("ui-icon-volume-on");
 		}
 		else {
 			$(this).button("option", "icons", {
 				primary: "ui-icon-play"
 			});
 			audElem.pause();
+			$(".playing:visible").removeClass("ui-icon-volume-on").addClass("ui-icon-volume-off");
 		}
 	});
 
