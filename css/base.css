@@ -121,11 +121,11 @@ tr, td {
 }
 
 .even.row_selected td {
-    background-color: #8FBCF0;
+    background-color: #8FBCF0 !important;
 }
 
 .odd.row_selected td {
-    background-color: #97C5F8;
+    background-color: #97C5F8 !important;
 }
 
 #audLibrary {
@@ -140,15 +140,15 @@ tr, td {
 }
 
 #audLibTable tbody tr.even:hover, #audLibTable tbody tr.even td.highlighted {
-	background-color: #BFCCE7;
+	background-color: #BFCCE7 !important;
 }
 
 #audLibTable tbody tr.odd:hover, #audLibTable tbody tr.odd td.highlighted {
-	background-color: #D0DEF9;
+	background-color: #D0DEF9 !important;
 }
 
-#audLibTable tr.even:hover {
-	background-color: #BFCCE7;
+#audLibTable tr.even:hover > td {
+	background-color: #BFCCE7 !important;
 }
 
 #audLibTable tr.even td.sorting_1 {
@@ -163,8 +163,8 @@ tr, td {
 	background-color: #D7E4FF;
 }
 
-#audLibTable tr.odd:hover {
-	background-color: #D0DEF9;
+#audLibTable tr.odd:hover > td {
+	background-color: #D0DEF9 !important;
 }
 
 #audLibTable tr.odd td.sorting_1 {

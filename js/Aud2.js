@@ -26,6 +26,7 @@ var selecting = false;
 var selStart = 0;
 var selEnd = 0;
 var tbl = [];
+var mousePressed = false;
 //// Useful audElem properties:
 // duration
 // currentTime
@@ -198,7 +199,7 @@ function makeInitRequests() {
 					{"sTitle": "Plays"}
 				],
 				"aoColumnDefs": [
-					{"sClass": "center", "aTargets": [1, 2, -1]},
+					{"sClass": "center", "aTargets": [0, 1, 2, 3, 4, 5]},
 					{"bVisible": false, "aTargets": [0]},
 					{"bSortable": false, "aTargets": [0, 1]}
 					],
@@ -211,10 +212,10 @@ function makeInitRequests() {
 				"bJQueryUI": true,
 				"sDom": '<"toolbar">frtip',
 				"fnRowCallback": function(nRow, aData, iDisplayIndex) {
-					$(nRow).find("td:eq(2)").addClass("id3");
-					$(nRow).find("td:eq(4)").addClass("id3");
-					$(nRow).find("td:eq(5)").addClass("id3");
-					$(nRow).find("td:eq(6)").addClass("id3");
+					$(nRow).find("td:eq(2)").addClass("id3"); //Title
+					$(nRow).find("td:eq(4)").addClass("id3"); //Atrist
+					$(nRow).find("td:eq(5)").addClass("id3"); //Album
+					$(nRow).find("td:eq(6)").addClass("id3"); //Genre
 					return nRow;
 				}
 			});
@@ -230,8 +231,15 @@ function makeInitRequests() {
 				},
 				"submitdata": function (value, settings) {
 					return {
-						"row_id": this.parentNode.getAttribute('id'),
-						"column": audTable.fnGetPosition(this)[2]
+						//"value" is included by jEditable
+						"song_id": audTable.fnGetData(this.parentNode, 0),
+						"field": audTable.fnGetPosition(this)[2],
+						//for field:
+						// 3 - Title
+						// 5 - Artist
+						// 6 - Album
+						// 7 - Genre
+						"userid": userid
 					};
 				},
 				"event":"tplclick",
@@ -241,8 +249,11 @@ function makeInitRequests() {
 				"width": "300px"
 			});
 
+			$(".id3").bind('tplclick', function() {
+				audPlPa.trigger("click");
+			})
 
-			$("#audLibTable tr").live('dblclick',function() {
+			$("#audLibTable tbody tr").live('dblclick',function() {
 				var toplayid = audTable.fnGetData(this, 0);
 				curSongId = toplayid;
 				changeSong(libraryJson[toplayid.toString()].url);
@@ -250,25 +261,49 @@ function makeInitRequests() {
 			});
 
 			//Multiple row select
-			$('#audLibTable tr').click(function() {
+			$('#audLibTable tbody tr').click(function() {
 				if ($(this).hasClass('row_selected')) {
+					$(this).find("input").prop("checked", false);
 					$(this).removeClass('row_selected');
 				}
 				else {
-					//$(this).find("td input").trigger("click");
+					$(this).find("input").prop("checked", true);
 					$(this).addClass('row_selected');
 				}
 			});
 
+			//Unfocus Deselect
+			$("#audLibTable").mouseleave(function() {
+				if(!mousePressed) {
+					$(".row_selected").trigger("click");
+				}
+			})
+
+			//Sorting Deselect
+			$("#audLibTable thead th").click(function() {
+				$(".row_selected").trigger("click");
+			});
+
+			//We actually dont need this because the mouseleave event on the table gets called before you can click this.
+			//But I'll keep it here just in case.
+			// //Filtering Deselect
+			// $(".dataTables_filter").click(function() {
+			// 	$(".row_selected").trigger("click");
+			// });
+
 			 //Draggable Rows
 			var table = $('#audLibTable');
-			table.find('tr').bind('mousedown', function() {
+			table.find('tbody tr').bind('mousedown', function() {
 			    table.disableSelection();
 			}).bind('mouseup', function() {
 			    table.enableSelection();
 			}).draggable({
 			    helper: function(event) {
-					return $('<div class="drag-song-row"><table></table></div>').find('table').append($(event.target).closest('tr').clone()).end().insertAfter(table);
+			    	var rows = $(".row_selected");
+			    	if(rows.length == 0) {
+			    		rows = $(event.target).closest('tr');
+			    	}
+					return $('<div class="drag-song-row"><table></table></div>').find('table').append(rows.clone()).end().insertAfter(table);
 				},
 				cursorAt: {
 					left: -5,
@@ -347,6 +382,15 @@ function audNewSeeker(repl) {
 
 // Bind some JQuery + HTML5 event functions
 function audBindEvents() {
+
+	//Track mouse pressed
+	$(document).mousedown(function() {
+		mousePressed = true;
+	});
+
+	$(document).mouseup(function() {
+		mousePressed = false;
+	});
 
 	// Volume Slider
 	$("#audVol").slider({
@@ -499,7 +543,6 @@ function audBindEvents() {
 			}
 		} while (i < curPlayList.length-1);
 		if (nextId === null) {
-			alert("Fuck");
 			return;
 		}
 		changeSong(curPlayList[nextid].songpath);
@@ -524,7 +567,6 @@ function audBindEvents() {
 			}
 		} while (i < curPlayList.length-2);
 		if (nextId === null) {
-			alert("Fuck");
 			return;
 		}
 		changeSong(curPlayList[nextid].songpath);
