@@ -25,6 +25,7 @@ var mimesUnsupported = [];
 var selecting = false;
 var selStart = 0;
 var selEnd = 0;
+var tbl = [];
 //// Useful audElem properties:
 // duration
 // currentTime
@@ -139,10 +140,14 @@ function changeSong(src) {
 	saveStats(function() {
 		var mime = getMime(src);
 		if (mimesSupported.indexOf(mime) != -1) {
-			audPlPa.trigger("click");
+			if(!audElem.paused) {
+				audPlPa.trigger("click");
+			}
 			audElem.src = src;
-			//audElem.load();
-			audPlPa.trigger("click");
+			audElem.load();
+			if(audElem.paused) {
+				audPlPa.trigger("click");
+			}
 		}
 		else {
 			audAudio.append(error(["Your browser does not support the audio type '", mime, "'"].join('')));
@@ -165,123 +170,129 @@ function makeInitRequests() {
 	}, function(data) {
 		libraryJson = data;
 		curPlayList = data;
-		var tbl = [];
 		// Generate the library table
-		$(data).each(function(i, v) {
+		var i = 0;
+		for(var v in data) {
+			v = data[v];
 			tbl.push([v.songid, ["<input type=\"checkbox\" id=\"row_checkbox_", i, "\" />"].join(''), i, v.title, "00:00", v.artist, v.album, "Rock", "0"]);
-		});
+			i++;
+		}
 
 
 		// Output
-		var audTable = $("#audLibTable").dataTable({
-			"aaData": tbl,
-			"bPaginate": false,
-			"bAutoWidth": false,
-			"aaColumns": [
-				{"sTitle": "ID"}, // Hidden
-				{"sTitle": ""},
-				{"sTitle": "#"},
-				{"sTitle": "Title"},
-				{"sTitle": "Time"},
-				{"sTitle": "Artist"},
-				{"sTitle": "Album"},
-				{"sTitle": "Plays"}
-			],
-			"aoColumnDefs": [
-				{"sClass": "center", "aTargets": [1, 2, -1]},
-				{"bVisible": false, "aTargets": [0]},
-				{"bSortable": false, "aTargets": [0, 1]}
+		if(!$("#audLibTable").hasClass("initialized"))
+		{
+			var audTable = $("#audLibTable").addClass('initialized').dataTable({
+				"aaData": tbl,
+				"bPaginate": false,
+				"bAutoWidth": false,
+				"aaColumns": [
+					{"sTitle": "ID"}, // Hidden
+					{"sTitle": ""},
+					{"sTitle": "#"},
+					{"sTitle": "Title"},
+					{"sTitle": "Time"},
+					{"sTitle": "Artist"},
+					{"sTitle": "Album"},
+					{"sTitle": "Genre"},
+					{"sTitle": "Plays"}
 				],
-			"oLanguage": {
-				"sEmptyTable": "No songs added",
-				"sInfo": "_TOTAL_ songs",
-				"sInfoEmpty": "0 songs", 
-				"sInfoFiltered": "(filtered from _MAX_ total songs)"
-			},
-			"bJQueryUI": true,
-			"sDom": '<"toolbar">frtip',
-			"fnRowCallback": function(nRow, aData, iDisplayIndex) {
-				$(nRow).find("td:eq(2)").addClass("id3");
-				$(nRow).find("td:eq(4)").addClass("id3");
-				$(nRow).find("td:eq(5)").addClass("id3");
-				$(nRow).find("td:eq(6)").addClass("id3");
-				return nRow;
-			}
-		});
+				"aoColumnDefs": [
+					{"sClass": "center", "aTargets": [1, 2, -1]},
+					{"bVisible": false, "aTargets": [0]},
+					{"bSortable": false, "aTargets": [0, 1]}
+					],
+				"oLanguage": {
+					"sEmptyTable": "No songs added",
+					"sInfo": "_TOTAL_ songs",
+					"sInfoEmpty": "0 songs", 
+					"sInfoFiltered": "(filtered from _MAX_ total songs)"
+				},
+				"bJQueryUI": true,
+				"sDom": '<"toolbar">frtip',
+				"fnRowCallback": function(nRow, aData, iDisplayIndex) {
+					$(nRow).find("td:eq(2)").addClass("id3");
+					$(nRow).find("td:eq(4)").addClass("id3");
+					$(nRow).find("td:eq(5)").addClass("id3");
+					$(nRow).find("td:eq(6)").addClass("id3");
+					return nRow;
+				}
+			});
 
-		//Add some toolbar text
-		$("div.toolbar").html('Music Library');
+			//Add some toolbar text
+			$("div.toolbar").html('Music Library');
 
-		//Make id3-corresponding rows editable
-		$('.id3', audTable.fnGetNodes()).editable('/path/to/edit.php', {
-			"callback": function(sValue, y) {
-				var aPos = audTable.fnGetPosition(this);
-				audTable.fnUpdate(sValue, aPos[0], aPos[1]);
-			},
-			"submitdata": function (value, settings) {
-				return {
-					"row_id": this.parentNode.getAttribute('id'),
-					"column": audTable.fnGetPosition(this)[2]
-				};
-			},
-			"event":"tplclick",
-			"onblur": "submit",
-			"placeholder": "---",
-			"height": "12px",
-			"width": "300px"
-		});
+			//Make id3-corresponding rows editable
+			$('.id3', audTable.fnGetNodes()).editable('/path/to/edit.php', {
+				"callback": function(sValue, y) {
+					var aPos = audTable.fnGetPosition(this);
+					audTable.fnUpdate(sValue, aPos[0], aPos[1]);
+				},
+				"submitdata": function (value, settings) {
+					return {
+						"row_id": this.parentNode.getAttribute('id'),
+						"column": audTable.fnGetPosition(this)[2]
+					};
+				},
+				"event":"tplclick",
+				"onblur": "submit",
+				"placeholder": "---",
+				"height": "12px",
+				"width": "300px"
+			});
 
 
-		$("#audLibTable tr").live('dblclick',function() {
-			var toplayid = audTable.fnGetData(this,0);
-			curSongId = toplayid;
-			changeSong(libraryJson[toplayid.toString()].url);
+			$("#audLibTable tr").live('dblclick',function() {
+				var toplayid = audTable.fnGetData(this, 0);
+				curSongId = toplayid;
+				changeSong(libraryJson[toplayid.toString()].url);
 
-		});
+			});
 
-		//Multiple row select
-		$('#audLibTable tr').click(function() {
-			if ($(this).hasClass('row_selected')) {
-				$(this).removeClass('row_selected');
-			}
-			else {
-				//$(this).find("td input").trigger("click");
-				$(this).addClass('row_selected');
-			}
-		});
+			//Multiple row select
+			$('#audLibTable tr').click(function() {
+				if ($(this).hasClass('row_selected')) {
+					$(this).removeClass('row_selected');
+				}
+				else {
+					//$(this).find("td input").trigger("click");
+					$(this).addClass('row_selected');
+				}
+			});
 
-		 //Draggable Rows
-		var table = $('#audLibTable');
-		table.find('tr').bind('mousedown', function() {
-		    table.disableSelection();
-		}).bind('mouseup', function() {
-		    table.enableSelection();
-		}).draggable({
-		    helper: function(event) {
-				return $('<div class="drag-song-row"><table></table></div>').find('table').append($(event.target).closest('tr').clone()).end().insertAfter(table);
-			},
-			cursorAt: {
-				left: -5,
-				bottom: 5
-			},
-			cursor: 'move',
-			distance: 10,
-			delay: 100,
-			scope: 'song-row',
-			revert: 'invalid'
-		});
+			 //Draggable Rows
+			var table = $('#audLibTable');
+			table.find('tr').bind('mousedown', function() {
+			    table.disableSelection();
+			}).bind('mouseup', function() {
+			    table.enableSelection();
+			}).draggable({
+			    helper: function(event) {
+					return $('<div class="drag-song-row"><table></table></div>').find('table').append($(event.target).closest('tr').clone()).end().insertAfter(table);
+				},
+				cursorAt: {
+					left: -5,
+					bottom: 5
+				},
+				cursor: 'move',
+				distance: 10,
+				delay: 100,
+				scope: 'song-row',
+				revert: 'invalid'
+			});
 
-		$('.audPlLink').droppable({
-			scope: 'song-row',
-			activeClass: 'active',
-			hoverClass: 'hover',
-			tolerance: 'pointer',
-			drop: function(event, ui) {
-				var classid = ui.helper.find('tr').attr('id');
-				var name = ui.helper.find('.name').html();
-				$('#playlist .selected').append('<li id="' + classid + '">' + name + '</li>');
-			}
-		});
+			$('.audPlLink').droppable({
+				scope: 'song-row',
+				activeClass: 'active',
+				hoverClass: 'hover',
+				tolerance: 'pointer',
+				drop: function(event, ui) {
+					var classid = ui.helper.find('tr').attr('id');
+					var name = ui.helper.find('.name').html();
+					$('#playlist .selected').append('<li id="' + classid + '">' + name + '</li>');
+				}
+			});
+		}
 	}, 'json');
 }
 
@@ -397,6 +408,55 @@ function audBindEvents() {
 			lastVol = audElem.volume;
 			audElem.volume = 0.0;
 			audVol.slider("value", 0.0);
+		}
+	});
+
+	//Shortcut Keys
+	$(document).keypress(function(e) {
+		console.log(e.keyCode);
+		switch(e.keyCode) {
+			case 32: //Spacebar
+				e.stopPropagation();
+				e.preventDefault();
+				audPlPa.trigger("click");
+				return false;
+				break;
+			case 37: //Left Arrow
+				e.stopPropagation();
+				e.preventDefault();
+				audPrev.trigger("click");
+				return false;
+				break;
+			case 38: //Up Arrow
+				e.stopPropagation();
+				e.preventDefault();
+				if(audElem.volume + 0.2 <= 1.0) {
+					audVol.slider("value", audVol.slider("value") + 0.2);
+					audElem.volume += 0.2;
+				}
+				else {
+					audVol.slider("value", 1.0);
+					audElem.volume = 1.0;
+				}
+				return false;
+				break;
+			case 39: //Right Arrow
+				e.stopPropagation();
+				e.preventDefault();
+				audNext.trigger("click");
+			case 40: //Down Arrow
+				e.stopPropagation();
+				e.preventDefault();
+				if(audElem.volume - 0.2 >= 0) {
+					audVol.slider("value", audVol.slider("value") - 0.2);
+					audElem.volume -= 0.2; 
+				}
+				else {
+					audVol.slider("value", 0.0);
+					audElem.volume = 0.0;
+				}
+				return false;
+				break;
 		}
 	});
 

@@ -8,9 +8,7 @@ $(document).ready(function(){
 		alert("IE Not Supported");
 	}
 	else if (AudSession) {
-		$.getScript("js/Aud2.js", function(){
-			audSetup();
-		});
+		$.getScript("js/Aud2.js");
 	}
 	else {
 
@@ -69,13 +67,14 @@ $(document).ready(function(){
 					$("#audLogin").prepend(error(response.error));
 				}
 				else {
-					$("#audPageLogin").fadeOut('fast');
-					$("#audPageLoading").fadeIn('fast');
-					$.getScript("js/Aud2.js");
 					username = response.username;
 					userid = response.userid;
-					//$("#audPageLogin").fadeOut("slow");
-					audSetup();
+					$("#audPageRegister").fadeOut('fast', function(){
+						$("#audPageLoading").fadeIn('fast', function(){
+							$.getScript("js/Aud2.js");
+							audSetup();
+						});
+					});
 				}
 			}
 		});
