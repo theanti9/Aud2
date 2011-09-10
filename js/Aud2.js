@@ -141,14 +141,29 @@ function changeSong(src) {
 	saveStats(function() {
 		var mime = getMime(src);
 		if (mimesSupported.indexOf(mime) != -1) {
-			if(!audElem.paused) {
-				audPlPa.trigger("click");
-			}
 			audElem.src = src;
 			audElem.load();
-			if(audElem.paused) {
-				audPlPa.trigger("click");
-			}
+			audPlPa.trigger("click");
+			var song = curPlayList[curSongId];
+			$("#audLyricsBox").html("<p>Loading...</p>");
+			$.ajax("/views/lyrics.php", {
+				"type": "POST",
+				"data": {
+					"title": song["title"],
+					"artist": song["artist"]
+				},
+				"success": function(data, textStatus, jqXHR) {
+					if(data.length > 100) {
+						$("#audLyricsBox").html(data);
+					}
+					else {
+						$("#audLyricsBox").html("<p>No Lyrics</p>");
+					}
+				},
+				"404": function() {
+					$("#audLyricsBox").html("<p>No Lyrics</p>");
+				}
+			});
 		}
 		else {
 			audAudio.append(error(["Your browser does not support the audio type '", mime, "'"].join('')));
@@ -489,6 +504,7 @@ function audBindEvents() {
 
 	//Shortcut Keys
 	$(document).keypress(function(e) {
+		//For testing - find new keycodes for possible use
 		console.log(e.keyCode);
 		switch(e.keyCode) {
 			case 32: //Spacebar
