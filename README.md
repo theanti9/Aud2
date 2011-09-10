@@ -7,12 +7,15 @@ Dependencies
 ============
 
 Client:
+
 * An HTML5 + Javascript capable web browser. Aud2 is tested to work in the latest versions of Chrome, Firefox, and Safari. Internet Explorer is not supported.
 
 Server:
+
 * PHP4 or newer (also see "Notes" section)
 
 Javascript/Jquery Libraries:
+
 * [JQuery](http://jquery.com/) (Included)
 * [JQueryUI](http://jqueryui.com/) (Included w/Theme)
 * [JQuery Templates Beta](http://api.jquery.com/category/plugins/templates/) (Included)
